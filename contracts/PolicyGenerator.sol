@@ -22,7 +22,8 @@ contract PolicyGenerator {
     function deployPolicy(
         SharedData.Policy memory policy,
         SharedData.HealthPolicyParams memory healthPolicyParams,
-        SharedData.LifePolicyParams memory lifePolicyParams
+        SharedData.LifePolicyParams memory lifePolicyParams,
+        SharedData.PolicyType policyType
     ) public returns (address policyAddress) {
         // depending on policyType deploy contract
         address localPolicyAddress;

@@ -10,12 +10,25 @@ import "./BaseInsurancePolicy.sol";
  */
 
 contract LifeInsurancePolicy is BaseInsurancePolicy {
-    SharedData.LifePOliParams private s_lifePolicyParams;
+    SharedData.LifePolicyParams private s_lifePolicyParams;
 
     constructor(
         SharedData.Policy memory policy,
         SharedData.LifePolicyParams memory lifePolicyParams
     ) BaseInsurancePolicy(policy) {
-        s_lifePolicyParams = lifePolicyParams;
+        // Loop over the nominees array and push it to storage
+        for (uint256 i = 0; i < lifePolicyParams.nominees.length; i++) {
+            s_lifePolicyParams.nominees.push(lifePolicyParams.nominees[i]);
+        }
+        s_lifePolicyParams.maturityCoverage = lifePolicyParams.maturityCoverage;
     }
+ function getNominees() public view returns(SharedData.Nominee[] memory nominees){
+     return s_lifePolicyParams.nominees;
+ }
+ function getNominee(uint128 index) public view returns(SharedData.Nominee memory nominee){
+     return s_lifePolicyParams.nominees[index];
+ }
+function getMaturityCoverage() public view returns(uint256 maturityCoverage){
+    return s_lifePolicyParams.maturityCoverage;
+}
 }
