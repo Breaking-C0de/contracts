@@ -41,15 +41,7 @@ library SharedData {
   }
 
   struct Nominee {
-    string name;
-    string gender;
-    string dateOfBirth;
-    string homeAddress;
-    string phoneNumber;
-    string pronouns;
-    string email;
-    string occupation;
-    address payable walletAddress;
+    HumanDetails nomineeDetails;
     uint128 nomineeShare;
   }
 
