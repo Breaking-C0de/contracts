@@ -30,9 +30,11 @@ library SharedData {
     bool isPolicyActive;
     bool isClaimable;
     bool isTerminated;
+    bool hasFundedForCurrentMonth;
     RevivalRule revivalRule;
     string policyDetails;
     PolicyType policyType;
+    address payable policyManagerContractAddress;
   }
 
   enum PolicyType {

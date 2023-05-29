@@ -28,6 +28,10 @@ contract BaseInsurancePolicy {
     s_policy.isPolicyActive = isPolicyActive;
   }
 
+  function setHasFundedForCurrentMonth(bool hasFundedForCurrentMonth) internal {
+    s_policy.hasFundedForCurrentMonth = hasFundedForCurrentMonth;
+  }
+
   // getter functions
   function getPolicyHolderDetails()
     public
@@ -57,7 +61,11 @@ contract BaseInsurancePolicy {
     return s_policy.totalCoverageByPolicy;
   }
 
-  function getPolicyDetails() public view returns (string memory policyDetails) {
+  function getPolicyDetails()
+    public
+    view
+    returns (string memory policyDetails)
+  {
     return s_policy.policyDetails;
   }
 
@@ -85,11 +93,19 @@ contract BaseInsurancePolicy {
     return s_policy.isTerminated;
   }
 
-  function getPolicyHolderWalletAddress() public view returns (address payable policyHolderWalletAddress) {
+  function getPolicyHolderWalletAddress()
+    public
+    view
+    returns (address payable policyHolderWalletAddress)
+  {
     return s_policy.policyHolder.policyHolderWalletAddress;
   }
 
-  function getPolicyType() public view returns (SharedData.PolicyType policyType) {
+  function getPolicyType()
+    public
+    view
+    returns (SharedData.PolicyType policyType)
+  {
     return s_policy.policyType;
   }
 }
