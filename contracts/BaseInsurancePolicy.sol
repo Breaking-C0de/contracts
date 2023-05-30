@@ -5,13 +5,13 @@ import "./SharedData.sol";
 
 contract BaseInsurancePolicy {
   SharedData.Policy private s_policy;
-
+  error OnlyOwnerAllowed();
   modifier onlyOwner() {
     if (
       msg.sender != s_policy.policyHolder.policyHolderWalletAddress ||
       msg.sender != s_policy.policyManagerContractAddress
     ) {
-      revert("Only owner or Policy Manager can call this function.");
+      revert OnlyOwnerAllowed();
     }
     _;
   }

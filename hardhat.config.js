@@ -16,7 +16,7 @@ const GOERLI_RPC_URL =
   process.env.GOERLI_RPC_URL ||
   "https://eth-goerli.alchemyapi.io/v2/your-api-key";
 const POLYGON_MUMBAI_RPC_URL =
-  process.env.POLYGON_MAINNET_RPC_URL ||
+  process.env.POLYGON_MUMBAI_RPC_URL ||
   "https://polygon-mainnet.alchemyapi.io/v2/your-api-key";
 const PRIVATE_KEY = process.env.PRIVATE_KEY || "0x";
 // optional
@@ -57,7 +57,7 @@ module.exports = {
       accounts: [process.env.PRIVATE_KEY],
       saveDeployments: true,
       chainId: 80001,
-    }
+    },
   },
   namedAccounts: {
     deployer: {
