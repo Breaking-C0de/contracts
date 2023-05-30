@@ -47,13 +47,13 @@ module.exports = {
       chainId: 31337,
     },
     goerli: {
-      url: process.env.RPC_URL,
+      url: process.env.GOERLI_RPC_URL,
       accounts: [process.env.PRIVATE_KEY],
       saveDeployments: true,
       chainId: 5,
     },
     mumbai: {
-      url: process.env.MUMBAI_RPC_URL,
+      url: process.env.POLYGON_MUMBAI_RPC_URL,
       accounts: [process.env.PRIVATE_KEY],
       saveDeployments: true,
       chainId: 80001,

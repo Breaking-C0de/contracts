@@ -38,18 +38,52 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       policyManagerContractAddress:
         "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
     },
+    {
+      nominees: [
+        {
+          nomineeDetails: {
+            name: "_policyNominee",
+            dateOfBirth: "1/2/1",
+            gender: "homosexual dragoness",
+            homeAddress: "dragon raja land",
+            phoneNumber: "003456789",
+            email: "homodragoness@phobo.com",
+            occupation: "homodragonesskiller",
+            pronouns: "mightyNoona/almightyNoona",
+            policyHolderWalletAddress:
+              "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          },
+          nomineeShare: 0.25,
+        },
+        {
+          nomineeDetails: {
+            name: "_policyNominee",
+            dateOfBirth: "1/2/1",
+            gender: "asexual dragoness",
+            homeAddress: "dragon raja land",
+            phoneNumber: "003456789",
+            email: "asexualdragon@homophobic.com",
+            occupation: "heterodragonkiller",
+            pronouns: "mightyOopa/almightyOopa",
+            policyHolderWalletAddress:
+              "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+          },
+          nomineeShare: 0.75,
+        },
+      ],
+    },
   ];
   log("-----------------------Deploying-----------------------------");
-  const baseInsurancePolicy = await deploy("BaseInsurancePolicy", {
+  const lifeInsurancePolicy = await deploy("LifeInsurancePolicy", {
     from: deployer,
     args: testArgs,
     log: true,
     waitConfirmations: 1,
   });
   log("-------------------Deployed at-----------------");
-  log(baseInsurancePolicy.address);
+  log(lifeInsurancePolicy.address);
   log("-------------------Verifying-----------------");
-  await verify(baseInsurancePolicy.address, testArgs);
+  await verify(lifeInsurancePolicy.address, testArgs);
 };
 
 module.exports.tags = ["BaseInsurancePolicy", "all"];

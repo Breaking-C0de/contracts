@@ -34,22 +34,25 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         revivalAmount: ethers.utils.parseEther("5"),
       },
       policyDetails: "This is a Dragon Contract",
-      policyType: 0, // Life
+      policyType: 1, // Health
       policyManagerContractAddress:
         "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
     },
+    {
+      copaymentPercentage: 0.69,
+    },
   ];
   log("-----------------------Deploying-----------------------------");
-  const baseInsurancePolicy = await deploy("BaseInsurancePolicy", {
+  const healthInsurancePolicy = await deploy("HealthInsurancePolicy", {
     from: deployer,
     args: testArgs,
     log: true,
     waitConfirmations: 1,
   });
   log("-------------------Deployed at-----------------");
-  log(baseInsurancePolicy.address);
+  log(healthInsurancePolicy.address);
   log("-------------------Verifying-----------------");
-  await verify(baseInsurancePolicy.address, testArgs);
+  await verify(healthInsurancePolicy.address, testArgs);
 };
 
 module.exports.tags = ["BaseInsurancePolicy", "all"];
