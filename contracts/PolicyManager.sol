@@ -32,7 +32,6 @@ contract PolicyManager {
     // Send the funds to the specified contract
     (bool success, ) = contractAddress.call{ value: msg.value }("");
     if (success) {
-      // TODO: make only this contract call the below function by using modifier
       baseContract.setHasFundedForCurrentMonth(true);
     } else {
       revert FundingError();

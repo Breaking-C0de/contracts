@@ -6,29 +6,41 @@ import "./SharedData.sol";
 contract BaseInsurancePolicy {
   SharedData.Policy private s_policy;
 
+  modifier onlyOwner() {
+    if (
+      msg.sender != s_policy.policyHolder.policyHolderWalletAddress ||
+      msg.sender != s_policy.policyManagerContractAddress
+    ) {
+      revert("Only owner or Policy Manager can call this function.");
+    }
+    _;
+  }
+
   constructor(SharedData.Policy memory policy) {
     s_policy = policy;
   }
 
   // Setter functions
 
-  function setTermination(bool isTerminate) internal {
+  function setTermination(bool isTerminate) public onlyOwner {
     s_policy.isTerminated = isTerminate;
   }
 
-  function setClaimable(bool isClaimable) internal {
+  function setClaimable(bool isClaimable) public onlyOwner {
     s_policy.isClaimable = isClaimable;
   }
 
-  function setClaimed(bool hasClaimed) internal {
+  function setClaimed(bool hasClaimed) public onlyOwner {
     s_policy.hasClaimed = hasClaimed;
   }
 
-  function setPolicyActive(bool isPolicyActive) internal {
+  function setPolicyActive(bool isPolicyActive) public onlyOwner {
     s_policy.isPolicyActive = isPolicyActive;
   }
 
-  function setHasFundedForCurrentMonth(bool hasFundedForCurrentMonth) internal {
+  function setHasFundedForCurrentMonth(
+    bool hasFundedForCurrentMonth
+  ) public onlyOwner {
     s_policy.hasFundedForCurrentMonth = hasFundedForCurrentMonth;
   }
 
