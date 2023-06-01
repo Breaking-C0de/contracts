@@ -9,6 +9,7 @@ import "./BaseInsurancePolicy.sol";
  */
 
 contract LifeInsurancePolicy is BaseInsurancePolicy {
+  error WithdrawingError();
     SharedData.LifePolicyParams private s_lifePolicyParams;
 
     constructor(
@@ -29,20 +30,12 @@ contract LifeInsurancePolicy is BaseInsurancePolicy {
         return s_lifePolicyParams.nominees[index];
     }
 
-    function withdraw() public payable {
+    function withdraw() public payable isNotTerminated {
         if (!s_policy.isClaimable) revert PolicyNotClaimable();
 
-        withdrawableAmount = amount * (100 - s_healthPolicyParams.copaymentPercentage);
-        if (withdrawableAmount >= address(this).balance) {
-            //Fund the contract
-            uint256 test = 5;
+        uint256 withdrawableAmount = s_policy.totalCoverageByPolicy;
+        s_policy.policyHolder.policyHolderWalletAddress.transfer(withdrawableAmount);
+        setTermination(true);
         }
-        (bool success, ) = s_policy.policyHolderWalletAddress.call{value: withdrawableAmount}("");
-        if (success) {
-            BaseInsurancePolicy baseContract = BaseInsurancePolicy(this.address);
-            baseContract.setHasFundedForCurrentMonth(true);
-        } else {
-            revert FundingError();
-        }
-    }
+    
 }
