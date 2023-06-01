@@ -20,6 +20,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         policyHolderWalletAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       },
       policyTenure: 5000,
+      timeInterval: 30,
       gracePeriod: 15,
       timeBeforeCommencement: 60,
       premiumToBePaid: ethers.utils.parseEther("1"),

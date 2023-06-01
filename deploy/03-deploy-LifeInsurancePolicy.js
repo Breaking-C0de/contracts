@@ -28,6 +28,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       isPolicyActive: true,
       isClaimable: false,
       isTerminated: false,
+      timeInterval: 30,
       hasFundedForCurrentMonth: false,
       revivalRule: {
         revivalPeriod: 15,

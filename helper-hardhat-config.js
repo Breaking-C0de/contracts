@@ -32,9 +32,10 @@ const networkConfig = {
 
 const developmentChains = ["hardhat", "localhost"];
 const VERIFICATION_BLOCK_CONFIRMATIONS = 6;
-
+const DECIMALS = "18";
 module.exports = {
   networkConfig,
   developmentChains,
+  DECIMALS,
   VERIFICATION_BLOCK_CONFIRMATIONS,
 };

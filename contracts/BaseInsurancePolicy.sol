@@ -7,8 +7,8 @@ import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 
 contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
   SharedData.Policy private s_policy;
-  uint256 private lastPaymentTimestamp;
-  uint256 private startTimestamp;
+  uint256 private s_lastPaymentTimestamp;
+  uint256 private s_startTimestamp;
 
   error OnlyOwnerAllowed();
   error PolicyNotActive();
@@ -21,6 +21,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
   error PolicyNotInGracePeriod();
   error RevivalAmountNotCorrect();
   error PremiumAmountNotCorrect();
+  error PolicyActive();
   modifier onlyOwner() {
     if (
       msg.sender != s_policy.policyHolder.policyHolderWalletAddress ||
@@ -30,6 +31,8 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     }
     _;
   }
+  // constant decimals
+  uint256 private constant DECIMALS = 10 ** 18;
 
   constructor(SharedData.Policy memory policy) {
     s_policy = policy;
@@ -69,7 +72,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
   }
 
   function getPolicyTenure() public view returns (uint128 policyTenure) {
-    return s_policy.polilcyTenure;
+    return s_policy.policyTenure;
   }
 
   function getGracePeriod() public view returns (uint128 gracePeriod) {
@@ -155,7 +158,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     if (!s_policy.isPolicyActive) {
       // if revivalPeriod is over then revert
       if (
-        block.timestamp - s_policy.lastPaymentTimestamp >
+        block.timestamp - s_lastPaymentTimestamp >
         s_policy.gracePeriod + s_policy.revivalRule.revivalPeriod //* seconds
       ) {
         upkeepNeeded = false;
@@ -164,7 +167,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     }
 
     upkeepNeeded =
-      (block.timestamp - lastPaymentTimestamp) > s_policy.timeInterval;
+      (block.timestamp - s_lastPaymentTimestamp) > s_policy.timeInterval;
     performData = "Upkeep is needed";
   }
 
@@ -173,20 +176,18 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
 
     // if gracePeriod is over then revert
     if (
-      block.timestamp - s_policy.lastPaymentTimestamp > s_policy.gracePeriod //* seconds
+      block.timestamp - s_lastPaymentTimestamp > s_policy.gracePeriod //* seconds
     ) s_policy.isPolicyActive = false;
 
     // if revivalPeriod is over then revert
     if (
-      block.timestamp - s_policy.lastPaymentTimestamp >
+      block.timestamp - s_lastPaymentTimestamp >
       s_policy.gracePeriod + s_policy.revivalRule.revivalPeriod //* seconds
     ) s_policy.isTerminated = true;
   }
 
   // fallback
   receive() external payable {
-    if (msg.data.length == 0) revert("Invalid function call");
-
     // if policy is terminated then revert
     if (!s_policy.isTerminated) revert PolicyTerminated();
 
@@ -194,26 +195,27 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     if (!s_policy.isPolicyActive) {
       // if revivalPeriod is over then revert
       if (
-        block.timestamp - s_policy.lastPaymentTimestamp >
+        block.timestamp - s_lastPaymentTimestamp >
         s_policy.revivalRule.revivalPeriod + s_policy.gracePeriod //* seconds
       ) revert PolicyNotInGracePeriod();
 
       // amount should be close to revivalAmount
-      if (s_policy.revivalRule.revivalAmount - msg.value < 0.0001)
-        revert RevivalAmountNotCorrect();
+      if (
+        s_policy.revivalRule.revivalAmount - msg.value < (1 * DECIMALS) / 10000
+      ) revert RevivalAmountNotCorrect();
 
       // set policy to active
-      lastPaymentTimestamp = block.timestamp;
+      s_lastPaymentTimestamp = block.timestamp;
       s_policy.isPolicyActive = true;
       return;
     }
 
     // if premiumToBePaid is close to msg.value then revert
-    if (s_policy.premiumToBePaid - msg.value < 0.0001)
+    if (s_policy.premiumToBePaid - msg.value < (1 * DECIMALS) / 10000)
       revert PremiumAmountNotCorrect();
 
     // set lastTimestamp to current block.timestamp
-    lastPaymentTimestamp = block.timestamp;
+    s_lastPaymentTimestamp = block.timestamp;
     s_policy.hasFundedForCurrentMonth = true;
   }
 
@@ -240,16 +242,16 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
 
     // if revivalPeriod is over then revert
     if (
-      block.timestamp - s_policy.lastPaymentTimestamp >
+      block.timestamp - s_lastPaymentTimestamp >
       s_policy.revivalRule.revivalPeriod + s_policy.gracePeriod //* seconds
     ) revert PolicyNotInGracePeriod();
 
     // amount should be close to revivalAmount
-    if (s_policy.revivalRule.revivalAmount - msg.value < 0.0001)
+    if (s_policy.revivalRule.revivalAmount - msg.value < (1 * DECIMALS) / 10000)
       revert RevivalAmountNotCorrect();
 
     // set policy to active
-    lastPaymentTimestamp = block.timestamp;
+    s_lastPaymentTimestamp = block.timestamp;
     s_policy.isPolicyActive = true;
   }
 }

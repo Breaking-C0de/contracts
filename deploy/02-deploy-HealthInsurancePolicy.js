@@ -21,6 +21,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
       },
       policyTenure: 5000,
       gracePeriod: 15,
+      timeInterval: 30,
       timeBeforeCommencement: 60,
       premiumToBePaid: ethers.utils.parseEther("1"),
       totalCoverageByPolicy: ethers.utils.parseEther("1000"),
