@@ -25,11 +25,18 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     modifier onlyOwner() {
         if (
             msg.sender != s_policy.policyHolder.policyHolderWalletAddress ||
-            msg.sender != s_policy.policyManagerContractAddress
+            msg.sender != s_policy.policyManagerContractAddress||
+            msg.sender != address(this)
         ) {
             revert OnlyOwnerAllowed();
         }
         _;
+    }
+    modifier isNotTerminated(){
+      if(s_policy.isTerminated){
+        revert PolicyTerminated();
+      }
+      _;
     }
     // constant decimals
     uint256 private constant DECIMALS = 10 ** 18;
