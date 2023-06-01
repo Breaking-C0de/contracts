@@ -54,7 +54,7 @@ contract BaseInsurancePolicy {
   }
 
   function getPolicyTenure() public view returns (uint128 policyTenure) {
-    return s_policy.polilcyTenure;
+    return s_policy.policyTenure;
   }
 
   function getGracePeriod() public view returns (uint128 gracePeriod) {

@@ -21,7 +21,7 @@ library SharedData {
 
   struct Policy {
     HumanDetails policyHolder;
-    uint128 polilcyTenure;
+    uint128 policyTenure;
     uint128 gracePeriod;
     uint128 timeBeforeCommencement;
     uint256 premiumToBePaid;
@@ -49,7 +49,6 @@ library SharedData {
 
   struct LifePolicyParams {
     Nominee[] nominees;
-    uint256 maturityCoverage;
   }
 
   struct HealthPolicyParams {

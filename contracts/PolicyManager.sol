@@ -11,6 +11,8 @@ contract PolicyManager {
   error InvalidContractAddress();
   error IncorrectAmountSent();
 
+  constructor() {}
+
   function fundContract(address payable contractAddress) public payable {
     // Get BaseContract
     BaseInsurancePolicy baseContract = BaseInsurancePolicy(contractAddress);
