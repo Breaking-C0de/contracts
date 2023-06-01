@@ -3,13 +3,24 @@ pragma solidity ^0.8.0;
 
 import "./SharedData.sol";
 import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
+import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 
-contract BaseInsurancePolicy is AutomationCompatible {
+contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     SharedData.Policy private s_policy;
     uint256 private lastPaymentTimestamp;
     uint256 private startTimestamp;
 
     error OnlyOwnerAllowed();
+    error PolicyNotActive();
+    error PolicyTerminated();
+    error PolicyNotClaimable();
+    error PolicyAlreadyClaimed();
+    error PolicyNotRevivable();
+    error PolicyNotFunded();
+    error PolicyNotMatured();
+    error PolicyNotInGracePeriod();
+    error RevivalAmountNotCorrect();
+    error PremiumAmountNotCorrect();
     modifier onlyOwner() {
         if (
             msg.sender != s_policy.policyHolder.policyHolderWalletAddress ||
@@ -22,72 +33,6 @@ contract BaseInsurancePolicy is AutomationCompatible {
 
     constructor(SharedData.Policy memory policy) {
         s_policy = policy;
-    }
-
-    function checkUpkeep(
-        bytes calldata checkData 
-    )
-        external
-        view
-        override
-        returns (bool upkeepNeeded, bytes memory performData)
-    {
-        // if policy is terminated then revert
-        if (s_policy.isTerminated) {
-            upkeepNeeded = false;
-            performData = "Policy is terminated";
-        }
-
-        // if policy is not active then revert
-        if (!s_policy.isPolicyActive) {
-            // if revivalPeriod is over then revert
-            if (
-                block.timestamp - s_policy.lastPaymentTimestamp >
-                s_policy.revivalRule.revivalPeriod //* seconds
-            ) {
-                upkeepNeeded = false;
-                performData = "Revival period is over";
-            }
-        }
-
-        // TODO: complete the checkUpkeep function
-
-        upkeepNeeded = true;
-        performData = "Upkeep is needed";
-    }
-
-    function performUpkeep(bytes calldata performData) external override {
-        // TODO: perform upkeep
-
-    }
-
-    // fallback
-    function() payable {
-        require(msg.data.length == 0) revert("Invalid function call");
-
-        // if policy is terminated then revert
-        require (!s_policy.isTerminated) revert("Policy is terminated");
-
-        // if policy is not active then revert
-        if (!s_policy.isPolicyActive) {
-            // amount should be close to revivalAmount
-            require (s_policy.revivalRule.revivalAmount - msg.value < 0.0001)
-                revert("Revival amount is not correct");
-
-            // if revivalPeriod is over then revert
-            require (
-                block.timestamp - s_policy.lastPaymentTimestamp >
-                s_policy.revivalRule.revivalPeriod //* seconds
-            ) revert("Revival period is over");
-        }
-
-        // if premiumToBePaid is close to msg.value then revert
-        require (s_policy.premiumToBePaid - msg.value < 0.0001)
-            revert("Premium amount is not correct");
-
-        // set lastTimestamp to current block.timestamp
-        lastPaymentTimestamp = block.timestamp;
-        s_policy.hasFundedForCurrentMonth = true;
     }
 
     // Setter functions
@@ -108,9 +53,7 @@ contract BaseInsurancePolicy is AutomationCompatible {
         s_policy.isPolicyActive = isPolicyActive;
     }
 
-    function (
-        bool hasFundedForCurrentMonth
-    ) public onlyOwner {
+    function(bool hasFundedForCurrentMonth) public onlyOwner {
         s_policy.hasFundedForCurrentMonth = hasFundedForCurrentMonth;
     }
 
@@ -193,5 +136,123 @@ contract BaseInsurancePolicy is AutomationCompatible {
         returns (SharedData.PolicyType policyType)
     {
         return s_policy.policyType;
+    }
+
+    // chainlink functions
+        function checkUpkeep(
+        bytes calldata checkData
+    )
+        external
+        view
+        override
+        returns (bool upkeepNeeded, bytes memory performData)
+    {
+        // if policy is terminated then revert
+        if (s_policy.isTerminated) {
+            upkeepNeeded = false;
+            performData = "Policy is terminated";
+        }
+
+        // if policy is not active then revert
+        if (!s_policy.isPolicyActive) {
+            // if revivalPeriod is over then revert
+            if (
+                block.timestamp - s_policy.lastPaymentTimestamp >
+                s_policy.gracePeriod + s_policy.revivalRule.revivalPeriod //* seconds
+            ) {
+                upkeepNeeded = false;
+                performData = "Revival period is over";
+            }
+        }
+
+        upkeepNeeded =
+            (block.timestamp - lastPaymentTimestamp) > s_policy.timeInterval;
+        performData = "Upkeep is needed";
+    }
+
+    function performUpkeep(bytes calldata performData) external override {
+        s_policy.hasFundedForCurrentMonth = false;
+
+        // if gracePeriod is over then revert
+        if (
+            block.timestamp - s_policy.lastPaymentTimestamp >
+            s_policy.gracePeriod //* seconds
+        ) s_policy.isPolicyActive = false;
+
+        // if revivalPeriod is over then revert
+        if (
+            block.timestamp - s_policy.lastPaymentTimestamp >
+            s_policy.gracePeriod + s_policy.revivalRule.revivalPeriod //* seconds
+        ) s_policy.isTerminated = true;
+    }
+
+    // fallback
+    function() payable onlyOwner external {
+        require(msg.data.length == 0) revert("Invalid function call");
+
+        // if policy is terminated then revert
+        require (!s_policy.isTerminated) revert PolicyTerminated();
+
+        // if policy is not active then revert
+        if (!s_policy.isPolicyActive) {
+            // if revivalPeriod is over then revert
+            require (
+                block.timestamp - s_policy.lastPaymentTimestamp >
+                s_policy.revivalRule.revivalPeriod + s_policy.gracePeriod //* seconds
+            ) revert PolicyNotInGracePeriod();
+
+            // amount should be close to revivalAmount
+            require (s_policy.revivalRule.revivalAmount - msg.value < 0.0001)
+                revert RevivalAmountNotCorrect();
+
+            // set policy to active
+            lastPaymentTimestamp = block.timestamp;
+            s_policy.isPolicyActive = true;
+            return;
+        }
+
+        // if premiumToBePaid is close to msg.value then revert
+        require (s_policy.premiumToBePaid - msg.value < 0.0001)
+            revert PremiumAmountNotCorrect();
+
+        // set lastTimestamp to current block.timestamp
+        lastPaymentTimestamp = block.timestamp;
+        s_policy.hasFundedForCurrentMonth = true;
+    }
+
+    function makeClaim() public onlyOwner {
+        require (!s_policy.isTerminated) revert PolicyTerminated();
+        require (s_policy.isPolicyActive) revert PolicyNotActive();
+
+        // TODO: chainlink API call
+        require (s_policy.isClaimable) revert PolicyNotClaimable();
+
+        // for single claimable policies
+        require (!s_policy.hasClaimed) revert PolicyAlreadyClaimed();
+
+        s_policy.hasClaimed = true;
+        s_policy.policyHolder.policyHolderWalletAddress.transfer(
+            s_policy.totalCoverageByPolicy
+        );
+    }
+
+    function revivePolicy() public payable onlyOwner {
+        require (!s_policy.isTerminated) revert PolicyTerminated();
+        require (!s_policy.isPolicyActive) revert PolicyActive();
+        require (s_policy.hasClaimed) revert PolicyAlreadyClaimed();
+
+        // if revivalPeriod is over then revert
+        require (
+            block.timestamp - s_policy.lastPaymentTimestamp >
+            s_policy.revivalRule.revivalPeriod + s_policy.gracePeriod //* seconds
+        ) revert PolicyNotInGracePeriod();
+
+        // amount should be close to revivalAmount
+        require (s_policy.revivalRule.revivalAmount - msg.value < 0.0001)
+            revert RevivalAmountNotCorrect();
+
+        // set policy to active
+        lastPaymentTimestamp = block.timestamp;
+        s_policy.isPolicyActive = true;
     }
 }

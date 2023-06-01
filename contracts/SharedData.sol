@@ -3,27 +3,28 @@ pragma solidity ^0.8.0;
 
 // building a library for shared data
 library SharedData {
-    struct HumanDetails {
-        string name;
-        string dateOfBirth;
-        string gender;
-        string homeAddress;
-        string phoneNumber;
-        string pronouns;
-        string email;
-        string occupation;
-        address payable policyHolderWalletAddress;
-    }
-    struct RevivalRule {
-        uint128 revivalPeriod;
-        uint256 revivalAmount;
-    }
+  struct HumanDetails {
+    string name;
+    string dateOfBirth;
+    string gender;
+    string homeAddress;
+    string phoneNumber;
+    string pronouns;
+    string email;
+    string occupation;
+    address payable policyHolderWalletAddress;
+  }
+  struct RevivalRule {
+    uint128 revivalPeriod;
+    uint256 revivalAmount;
+  }
 
   struct Policy {
     HumanDetails policyHolder;
-    uint128 policyTenure;
+    uint128 polilcyTenure;
     uint128 gracePeriod;
-    uint128 timeBeforeCommencement;
+    uint128 timeBeforeCommencement; // in days
+    uint256 timeInterval; // 2630000 (in months) in seconds
     uint256 premiumToBePaid;
     uint256 totalCoverageByPolicy;
     bool hasClaimed;
@@ -37,21 +38,21 @@ library SharedData {
     address payable policyManagerContractAddress;
   }
 
-    enum PolicyType {
-        Life,
-        Health
-    }
+  enum PolicyType {
+    Life,
+    Health
+  }
 
-    struct Nominee {
-        HumanDetails nomineeDetails;
-        uint128 nomineeShare;
-    }
+  struct Nominee {
+    HumanDetails nomineeDetails;
+    uint128 nomineeShare;
+  }
 
   struct LifePolicyParams {
     Nominee[] nominees;
   }
 
-    struct HealthPolicyParams {
-        uint64 copaymentPercentage;
-    }
+  struct HealthPolicyParams {
+    uint64 copaymentPercentage;
+  }
 }
