@@ -23,7 +23,8 @@ library SharedData {
         HumanDetails policyHolder;
         uint128 polilcyTenure;
         uint128 gracePeriod;
-        uint128 timeBeforeCommencement;
+        uint128 timeBeforeCommencement; // in seconds
+        uint256 timeInterval; // 2630000 (in months) in seconds
         uint256 premiumToBePaid;
         uint256 totalCoverageByPolicy;
         bool hasClaimed;
