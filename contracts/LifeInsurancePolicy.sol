@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./SharedData.sol";
 import "./BaseInsurancePolicy.sol";
 
 /**
@@ -10,47 +9,40 @@ import "./BaseInsurancePolicy.sol";
  */
 
 contract LifeInsurancePolicy is BaseInsurancePolicy {
-  SharedData.LifePolicyParams private s_lifePolicyParams;
+    SharedData.LifePolicyParams private s_lifePolicyParams;
 
-  constructor(
-    SharedData.Policy memory policy,
-    SharedData.LifePolicyParams memory lifePolicyParams
-  ) BaseInsurancePolicy(policy) {
-    // Loop over the nominees array and push it to storage
-    for (uint256 i = 0; i < lifePolicyParams.nominees.length; i++) {
-      s_lifePolicyParams.nominees.push(lifePolicyParams.nominees[i]);
+    constructor(
+        SharedData.Policy memory policy,
+        SharedData.LifePolicyParams memory lifePolicyParams
+    ) BaseInsurancePolicy(policy) {
+        // Loop over the nominees array and push it to storage
+        for (uint256 i = 0; i < lifePolicyParams.nominees.length; i++) {
+            s_lifePolicyParams.nominees.push(lifePolicyParams.nominees[i]);
+        }
     }
-  }
 
-  function getNominees()
-    public
-    view
-    returns (SharedData.Nominee[] memory nominees)
-  {
-    return s_lifePolicyParams.nominees;
-  }
+    function getNominees() public view returns (SharedData.Nominee[] memory nominees) {
+        return s_lifePolicyParams.nominees;
+    }
 
-  function getNominee(
-    uint128 index
-  ) public view returns (SharedData.Nominee memory nominee) {
-    return s_lifePolicyParams.nominees[index];
-  }
-function withdraw() public payable {
-    if(!s_policy.isClaimable)
-    revert PolicyNotClaimable();
-    
-    const withdawableAmount = amount*(100-s_healthPolicyParams.copaymentPercentage);
-    if(withdawableAmount>=address(this).balance)
-    {
-        //Fund the contract
+    function getNominee(uint128 index) public view returns (SharedData.Nominee memory nominee) {
+        return s_lifePolicyParams.nominees[index];
     }
-    (bool success, ) = s_policy.policyHolderWalletAddress.call{ value: withdrawableAmount }("");
-    if (success) {
-      BaseInsurancePolicy baseContract = BaseInsurancePolicy(this.address);
-      baseContract.setHasFundedForCurrentMonth(true);
-      
-    } else {
-      revert FundingError();
+
+    function withdraw() public payable {
+        if (!s_policy.isClaimable) revert PolicyNotClaimable();
+
+        withdrawableAmount = amount * (100 - s_healthPolicyParams.copaymentPercentage);
+        if (withdrawableAmount >= address(this).balance) {
+            //Fund the contract
+            uint256 test = 5;
+        }
+        (bool success, ) = s_policy.policyHolderWalletAddress.call{value: withdrawableAmount}("");
+        if (success) {
+            BaseInsurancePolicy baseContract = BaseInsurancePolicy(this.address);
+            baseContract.setHasFundedForCurrentMonth(true);
+        } else {
+            revert FundingError();
+        }
     }
-  }
 }
