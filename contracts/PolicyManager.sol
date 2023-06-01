@@ -36,5 +36,5 @@ contract PolicyManager {
     } else {
       revert FundingError();
     }
-  }
+  } 
 }

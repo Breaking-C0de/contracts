@@ -31,4 +31,22 @@ contract LifeInsurancePolicy is BaseInsurancePolicy {
 function getMaturityCoverage() public view returns(uint256 maturityCoverage){
     return s_lifePolicyParams.maturityCoverage;
 }
+function withdraw() public payable {
+    if(!s_policy.isClaimable)
+    revert PolicyNotClaimable();
+    
+    const withdawableAmount = amount*(100-s_healthPolicyParams.copaymentPercentage);
+    if(withdawableAmount>=address(this).balance)
+    {
+        //Fund the contract
+    }
+    (bool success, ) = s_policy.policyHolderWalletAddress.call{ value: withdrawableAmount }("");
+    if (success) {
+      BaseInsurancePolicy baseContract = BaseInsurancePolicy(this.address);
+      baseContract.setHasFundedForCurrentMonth(true);
+      
+    } else {
+      revert FundingError();
+    }
+  }
 }

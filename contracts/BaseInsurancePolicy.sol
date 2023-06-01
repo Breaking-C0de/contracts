@@ -194,4 +194,14 @@ contract BaseInsurancePolicy is AutomationCompatible {
     {
         return s_policy.policyType;
     }
+    function claim(uint 256 claimAmount) internal override returns(bool){
+    //event invoked for DAO vote
+    //if claim is validated
+    s_healthPolicyParams.isClaimable = true;
+    //if claim is rejected
+    s_healthPolicyParams.isTerminated = true
+    payable(msg.sender).transfer(amount);
+
+    return true;
+}
 }
