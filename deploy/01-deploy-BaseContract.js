@@ -1,6 +1,6 @@
-import { ethers, network } from "hardhat";
-import { developmentChains } from "../helper-hardhat-config";
-import { verify } from "../utils/verify";
+const { ethers, network } = require("hardhat");
+const { developmentChains } = require("../helper-hardhat-config");
+const { verify } = require("../utils/verify");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
@@ -19,7 +19,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         pronouns: "mighty/almighty",
         policyHolderWalletAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       },
-      policyTenuer: 5000,
+      policyTenure: 5000,
       gracePeriod: 15,
       timeBeforeCommencement: 60,
       premiumToBePaid: ethers.utils.parseEther("1"),
@@ -34,25 +34,24 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         revivalAmount: ethers.utils.parseEther("5"),
       },
       policyDetails: "This is a Dragon Contract",
-      policyType: 1, // Health
+      policyType: 0, // Life
       policyManagerContractAddress:
         "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
     },
-    {
-      copaymentPercentage: 0.69,
-    },
   ];
   log("-----------------------Deploying-----------------------------");
-  const healthInsurancePolicy = await deploy("HealthInsurancePolicy", {
+  const baseInsurancePolicy = await deploy("BaseInsurancePolicy", {
     from: deployer,
     args: testArgs,
     log: true,
     waitConfirmations: 1,
   });
   log("-------------------Deployed at-----------------");
-  log(healthInsurancePolicy.address);
-  log("-------------------Verifying-----------------");
-  await verify(healthInsurancePolicy.address, testArgs);
+  log(baseInsurancePolicy.address);
+  if (!developmentChains.includes(network.name)) {
+    log("-------------------Verifying-----------------");
+    await verify(baseInsurancePolicy.address, testArgs);
+  }
 };
 
 module.exports.tags = ["BaseInsurancePolicy", "all"];

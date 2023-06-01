@@ -1,6 +1,6 @@
-import { ethers, network } from "hardhat";
-import { developmentChains } from "../helper-hardhat-config";
-import { verify } from "../utils/verify";
+const { ethers, network } = require("hardhat");
+const { developmentChains } = require("../helper-hardhat-config");
+const { verify } = require("../utils/verify");
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deployer } = await getNamedAccounts();
@@ -19,7 +19,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         pronouns: "mighty/almighty",
         policyHolderWalletAddress: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       },
-      policyTenuer: 5000,
+      policyTenure: 5000,
       gracePeriod: 15,
       timeBeforeCommencement: 60,
       premiumToBePaid: ethers.utils.parseEther("1"),
@@ -53,7 +53,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
             policyHolderWalletAddress:
               "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           },
-          nomineeShare: 0.25,
+          nomineeShare: 25, // in percentage
         },
         {
           nomineeDetails: {
@@ -68,7 +68,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
             policyHolderWalletAddress:
               "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           },
-          nomineeShare: 0.75,
+          nomineeShare: 75, // in percentage
         },
       ],
     },
@@ -82,8 +82,10 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   });
   log("-------------------Deployed at-----------------");
   log(lifeInsurancePolicy.address);
-  log("-------------------Verifying-----------------");
-  await verify(lifeInsurancePolicy.address, testArgs);
+  if (!developmentChains.includes(network.name)) {
+    log("-------------------Verifying-----------------");
+    await verify(lifeInsurancePolicy.address, testArgs);
+  }
 };
 
-module.exports.tags = ["BaseInsurancePolicy", "all"];
+module.exports.tags = ["LifeInsurancePolicy", "all"];
