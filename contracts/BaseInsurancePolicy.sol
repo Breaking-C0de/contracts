@@ -238,4 +238,10 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         s_lastPaymentTimestamp = block.timestamp;
         s_policy.isPolicyActive = true;
     }
+
+    function terminatePolicy() public onlyOwner {
+        if (s_policy.isTerminated) revert PolicyTerminated();
+        s_policy.isTerminated = true;
+        s_policy.policyManagerContractAddress.transfer(address(this).balance);
+    }
 }
