@@ -2,7 +2,6 @@
 pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
-import "./HealthInsurancePolicy.sol";
 import "./LifeInsurancePolicy.sol";
 import "./BaseInsurancePolicy.sol";
 import "./SharedData.sol";
@@ -16,31 +15,6 @@ contract PolicyGenerator {
     );
 
     constructor() {}
-
-    function deployHealthPolicy(
-        SharedData.Policy memory policy,
-        SharedData.HealthPolicyParams memory healthPolicyParams,
-        address _link,
-        address _oracle,
-        address priceFeed
-    ) public returns (address policyAddress) {
-        // depending on policyType deploy contract
-        address localPolicyAddress;
-        HealthInsurancePolicy s_healthInsurancePolicy;
-        s_healthInsurancePolicy = new HealthInsurancePolicy(
-            policy,
-            healthPolicyParams,
-            _link,
-            priceFeed
-        );
-        localPolicyAddress = address(s_healthInsurancePolicy);
-        emit PolicyCreated(
-            localPolicyAddress,
-            policy.policyHolder.policyHolderWalletAddress,
-            SharedData.PolicyType.Health
-        );
-        return localPolicyAddress;
-    }
 
     function deployLifePolicy(
         SharedData.Policy memory policy,

@@ -5,6 +5,7 @@ import "./SharedData.sol";
 import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./PriceConvertor.sol";
 
 abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, ConfirmedOwner {
@@ -57,7 +58,7 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     //This array will store all those addresses which will be allowed to call certain restricted functions
     constructor(
         SharedData.Policy memory policy,
-        address,
+        address _link,
         address priceFeed
     ) ConfirmedOwner(msg.sender) {
         s_policy = policy;
@@ -283,11 +284,11 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         setTermination(true);
     }
 
-    function getPremiuminUSD() public view returns (uint256 convertedAmount) {
-        uint256 ethPriceInUsd = s_policy.premiumToBePaid.getConversionRate(s_priceFeed);
-        uint256 usdAmount = (s_policy.premiumToBePaid * ethPriceInUsd) / 1e18;
-        return usdAmount;
-    }
+    // function getPremiuminUSD() public view returns (uint256 convertedAmount) {
+    //     uint256 ethPriceInUsd = s_policy.premiumToBePaid.getConversionRate(s_priceFeed);
+    //     uint256 usdAmount = (s_policy.premiumToBePaid * ethPriceInUsd) / 1e18;
+    //     return usdAmount;
+    // }
 
     function getAdmins() public view returns (address[] memory admins) {
         return s_admins;

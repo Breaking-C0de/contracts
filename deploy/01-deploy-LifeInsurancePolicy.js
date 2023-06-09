@@ -87,7 +87,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
                 },
             ],
         },
-        networkConfig[network.config.chainId]["priceFeed"],
+        link,
         networkConfig[network.config.chainId]["priceFeed"],
     ]
     log("-----------------------Deploying-----------------------------")
