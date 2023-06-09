@@ -31,6 +31,10 @@ contract LifeInsurancePolicy is BaseInsurancePolicy {
         return s_lifePolicyParams.nominees[index];
     }
 
+    function getLifePolicyParams() public view returns (SharedData.LifePolicyParams memory lifePolicyParams) {
+        return s_lifePolicyParams;
+    }
+
     function withdraw() public payable isNotTerminated {
         bool isNominee = false;
         for (uint256 i = 0; i < s_lifePolicyParams.nominees.length; i++) {

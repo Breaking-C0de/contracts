@@ -30,7 +30,7 @@ const networkConfig = {
   },
 };
 
-const developmentChains = ["hardhat", "localhost"];
+const developmentChains = ["hardhat", "localhost", "polygon"];
 const VERIFICATION_BLOCK_CONFIRMATIONS = 6;
 const DECIMALS = "18";
 module.exports = {

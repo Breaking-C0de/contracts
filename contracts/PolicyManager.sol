@@ -11,7 +11,11 @@ contract PolicyManager {
   error InvalidContractAddress();
   error IncorrectAmountSent();
 
-  constructor() {}
+  //private address state variable
+  address payable private s_owner;
+  constructor() {
+    s_owner = payable(msg.sender);
+  }
 
   function fundContract(address payable contractAddress) public payable {
     // Get BaseContract
@@ -38,5 +42,7 @@ contract PolicyManager {
     } else {
       revert FundingError();
     }
-  } 
+  }
+  
+   
 }
