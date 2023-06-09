@@ -6,11 +6,9 @@ import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "./PriceConvertor.sol";
 
 abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, ConfirmedOwner {
     using Chainlink for Chainlink.Request;
-    using PriceConverter for uint256;
 
     uint256 private fee;
 
@@ -284,11 +282,13 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         setTermination(true);
     }
 
-    // function getPremiuminUSD() public view returns (uint256 convertedAmount) {
-    //     uint256 ethPriceInUsd = s_policy.premiumToBePaid.getConversionRate(s_priceFeed);
-    //     uint256 usdAmount = (s_policy.premiumToBePaid * ethPriceInUsd) / 1e18;
-    //     return usdAmount;
-    // }
+    function getPremiuminUSD() public view returns (uint256 convertedAmount) {
+        (, int256 answer, , , ) = s_priceFeed.latestRoundData();
+        uint256 ethPriceInUsd = uint256(answer) ;
+    // ETH/USD in 10^8 digit
+        uint256 usdAmount = (s_policy.premiumToBePaid * ethPriceInUsd) / DECIMALS;
+        return usdAmount;
+    }
 
     function getAdmins() public view returns (address[] memory admins) {
         return s_admins;
