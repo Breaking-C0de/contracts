@@ -39,15 +39,14 @@ const { developmentChains, DECIMALS } = require("../../helper-hardhat-config")
                           isPolicyActive: true,
                           isClaimable: false,
                           isTerminated: false,
-                          hasFundedForCurrentMonth: false,
+                          hasFundedForCurrentInterval: false,
                           revivalRule: {
                               revivalPeriod: 15,
                               revivalAmount: ethers.utils.parseEther("5"),
                           },
                           policyDetails: "This is a Dragon Contract",
                           policyType: 1, // Health
-                          policyManagerContractAddress:
-                              "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+                          policyManagerAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
                       },
                       {
                           copaymentPercentage: 69, // in percentage
@@ -89,15 +88,14 @@ const { developmentChains, DECIMALS } = require("../../helper-hardhat-config")
                           isClaimable: false,
                           isTerminated: false,
                           timeInterval: 30,
-                          hasFundedForCurrentMonth: false,
+                          hasFundedForCurrentInterval: false,
                           revivalRule: {
                               revivalPeriod: 15,
                               revivalAmount: ethers.utils.parseEther("5"),
                           },
                           policyDetails: "This is a Dragon Contract",
                           policyType: 0, // Life
-                          policyManagerContractAddress:
-                              "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+                          policyManagerAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
                       },
                       {
                           nominees: [

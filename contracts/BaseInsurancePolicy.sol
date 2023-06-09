@@ -4,14 +4,8 @@ pragma solidity ^0.8.0;
 import "./SharedData.sol";
 import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
-import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, ConfirmedOwner {
-    using Chainlink for Chainlink.Request;
-
-    bytes32 private jobId;
-    uint256 private fee;
-
+contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     SharedData.Policy internal s_policy;
     uint256 private s_lastPaymentTimestamp;
     uint256 private s_startTimestamp;
@@ -28,6 +22,7 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     error RevivalAmountNotCorrect();
     error PremiumAmountNotCorrect();
     error PolicyActive();
+    error InsufficientBalance(uint256 contractBalance, uint256 amount);
     modifier onlyAdmin() {
         bool allowed = false;
         for (uint8 i = 0; i < admins.length; i++) {
@@ -50,24 +45,13 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     address[] public admins;
 
     //This array will store all those addresses which will be allowed to call certain restricted functions
-    constructor(
-        SharedData.Policy memory policy,
-        address[] memory _admins,
-        address _link,
-        address _oracle,
-        bytes32 _jobId
-    ) {
+    constructor(SharedData.Policy memory policy, address[] memory _admins) {
         s_policy = policy;
         for (uint8 i = 0; i < _admins.length; i++) {
             admins.push(_admins[i]);
         }
         admins.push(s_policy.policyHolder.policyHolderWalletAddress);
         admins.push(address(this));
-
-        setChainlinkToken(_link);
-        setChainlinkOracle(_oracle);
-        jobId = _jobId;
-        fee = (1 * LINK_DIVISIBILITY) / 10;
     }
 
     // Setter functions
@@ -88,8 +72,8 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         s_policy.isPolicyActive = isPolicyActive;
     }
 
-    function setHasFundedForCurrentMonth(bool hasFundedForCurrentMonth) public onlyAdmin {
-        s_policy.hasFundedForCurrentMonth = hasFundedForCurrentMonth;
+    function sethasFundedForCurrentInterval(bool hasFundedForCurrentInterval) public onlyAdmin {
+        s_policy.hasFundedForCurrentInterval = hasFundedForCurrentInterval;
     }
 
     // getter functions
@@ -184,7 +168,7 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     }
 
     function performUpkeep(bytes calldata performData) external override {
-        s_policy.hasFundedForCurrentMonth = false;
+        s_policy.hasFundedForCurrentInterval = false;
 
         // if gracePeriod is over then revert
         if (
@@ -196,37 +180,6 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
             block.timestamp - s_lastPaymentTimestamp >
             s_policy.gracePeriod + s_policy.revivalRule.revivalPeriod //* seconds
         ) s_policy.isTerminated = true;
-    }
-
-    function requestVolumeData(
-        string memory url,
-        string memory path
-    ) public returns (bytes32 requestId) {
-        Chainlink.Request memory req = buildChainlinkRequest(
-            jobId,
-            address(this),
-            this.fulfill.selector
-        );
-
-        // Set the URL to perform the GET request on
-        req.add("get", url);
-        req.add("path", path);
-
-        int256 timesAmount = 10 ** 18;
-        req.addInt("times", timesAmount);
-
-        // Sends the request
-        return sendChainlinkRequest(req, fee);
-    }
-
-    /**
-     * Receive the response in the form of uint256
-     */
-    function fulfill(
-        bytes32 _requestId,
-        uint256 /* _volume */
-    ) public recordChainlinkFulfillment(_requestId) {
-        // override this function to implement callback functionality
     }
 
     // fallback
@@ -258,13 +211,14 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
 
         // set lastTimestamp to current block.timestamp
         s_lastPaymentTimestamp = block.timestamp;
-        s_policy.hasFundedForCurrentMonth = true;
+        s_policy.hasFundedForCurrentInterval = true;
     }
 
     function makeClaim() public onlyAdmin returns (bool claimed) {
         if (!s_policy.isTerminated) revert PolicyTerminated();
         if (s_policy.isPolicyActive) revert PolicyNotActive();
 
+        // TODO: chainlink API call
         if (s_policy.isClaimable) revert PolicyNotClaimable();
 
         // for single claimable policies
@@ -297,12 +251,15 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     function terminatePolicy() public onlyAdmin {
         if (s_policy.isTerminated) revert PolicyTerminated();
         s_policy.isTerminated = true;
-        s_policy.policyManagerContractAddress.transfer(address(this).balance);
+        s_policy.policyManagerAddress.transfer(address(this).balance);
     }
 
     function withdraw() public payable onlyAdmin isNotTerminated {
         uint256 withdrawableAmount = s_policy.totalCoverageByPolicy;
+        if (address(this).balance < withdrawableAmount)
+            revert InsufficientBalance(address(this).balance, withdrawableAmount);
         s_policy.policyHolder.policyHolderWalletAddress.transfer(withdrawableAmount);
         setTermination(true);
     }
+    
 }

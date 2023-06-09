@@ -34,6 +34,6 @@ abstract contract HealthInsurancePolicy is BaseInsurancePolicy {
             //Fund the contract
         }
         s_policy.policyHolder.policyHolderWalletAddress.transfer(withdrawableAmount);
-        setHasFundedForCurrentMonth(true);
+        sethasFundedForCurrentInterval(true);
     }
 }

@@ -37,14 +37,14 @@ const { developmentChains, DECIMALS } = require("../../helper-hardhat-config")
                       isPolicyActive: true,
                       isClaimable: false,
                       isTerminated: false,
-                      hasFundedForCurrentMonth: false,
+                      hasFundedForCurrentInterval: false,
                       revivalRule: {
                           revivalPeriod: 300,
                           revivalAmount: ethers.utils.parseEther("5"),
                       },
                       policyDetails: "This is a Dragon Contract",
                       policyType: 1, // Health
-                      policyManagerContractAddress: policyManagerContract.address,
+                      policyManagerAddress: policyManagerContract.address,
                   },
                   {
                       copaymentPercentage: 70, // in percentage
@@ -58,7 +58,5 @@ const { developmentChains, DECIMALS } = require("../../helper-hardhat-config")
                   policyAddress
               )
           })
-          describe("", function (){
-
-          })
+          describe("", function () {})
       })
