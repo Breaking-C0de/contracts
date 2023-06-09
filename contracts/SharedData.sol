@@ -84,6 +84,7 @@ library SharedData {
     @param policyDetails This is the policy details
     @param policyType This is the policy type
     @param policyManagerAddress This is the policy manager contract address 
+    @param admins This is the list of admins for the policy who are able to call certain functions
      */
     struct Policy {
         HumanDetails policyHolder;

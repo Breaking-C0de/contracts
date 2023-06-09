@@ -6,6 +6,12 @@ import "./LifeInsurancePolicy.sol";
 import "./BaseInsurancePolicy.sol";
 import "./SharedData.sol";
 
+/**
+@dev PolicyGenerator Contract
+note This contract can be used to generate the child contracts 
+derived from BaseInsurancePolicy contract. 
+note Add the deployCustomPolicy function to deploy the custom policy contracts 
+*/
 contract PolicyGenerator {
     // Event to be emitted when a new policy is created
     event PolicyCreated(
@@ -16,6 +22,11 @@ contract PolicyGenerator {
 
     constructor() {}
 
+    /**
+    @dev deployLifePolicy Function
+    note this is an example deploy function to deploy the LifeInsurancePolicy contract 
+    using the policy generator
+    */
     function deployLifePolicy(
         SharedData.Policy memory policy,
         SharedData.LifePolicyParams memory lifePolicyParams,

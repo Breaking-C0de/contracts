@@ -4,15 +4,25 @@ pragma solidity ^0.8.0;
 import "./BaseInsurancePolicy.sol";
 
 /**
- * @title LifeInsurancePolicy
- * @dev LifeInsurancePolicy is a contract for managing a life insurance policy
+ * @dev LifeInsurancePolicy
+ * note This is an example policy which shows the usage of BaseInsurance Policy
  */
 
 contract LifeInsurancePolicy is BaseInsurancePolicy {
+    // Errors are defined here
     error WithdrawingError();
     error PolicyNomineeNotFound();
+
+    // Custom struct defined for the lifeInsurance Policy
     SharedData.LifePolicyParams private s_lifePolicyParams;
 
+    /**
+    @dev Constructor
+    @param policy policy object, base insurance policy param object
+    @param lifePolicyParams life policy param object, this is the custom struct defined for the life insurance policy
+    @param _link chainlink link token address
+    @param priceFeed chainlink price feed address
+     */
     constructor(
         SharedData.Policy memory policy,
         SharedData.LifePolicyParams memory lifePolicyParams,
@@ -41,6 +51,11 @@ contract LifeInsurancePolicy is BaseInsurancePolicy {
         return s_lifePolicyParams;
     }
 
+    /**
+    @dev withdraw function
+    note here, the base withdraw function is overidden to implement custom logic in withdraw
+    according to the policy
+    */
     function withdraw() public payable override isNotTerminated {
         bool isNominee = false;
         for (uint256 i = 0; i < s_lifePolicyParams.nominees.length; i++) {

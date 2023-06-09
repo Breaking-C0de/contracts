@@ -1,9 +1,9 @@
 const { assert, expect } = require("chai")
 const { network, deployments, ethers, getNamedAccounts } = require("hardhat")
-const { developmentChains } = require("../helper-hardhat-config")
+const { developmentChains } = require("../../helper-hardhat-config")
 !developmentChains.includes(network.name)
     ? describe.skip
-    : describe("LifeInsurancePolicy Contract Staging Test", function () {
+    : describe("LifeInsurancePolicy Contract Test", function () {
           console.log(network.name)
           let LifeInsurancePolicyContract, deployer
           beforeEach(async () => {
@@ -25,7 +25,7 @@ const { developmentChains } = require("../helper-hardhat-config")
               const oldBalance2 = await ethers.provider.getBalance(
                   s_lifePolicyParams.nominees[1].nomineeDetails.policyHolderWalletAddress
               )
-              const tx1= await LifeInsurancePolicyContract.connect(nominee1).withdraw()
+              const tx1 = await LifeInsurancePolicyContract.connect(nominee1).withdraw()
               const tx = LifeInsurancePolicyContract.connect(nominee1).withdraw()
               await expect(tx).to.be.revertedWith("PolicyNomineeNotFound") // Replace 'Error message' with the expected error message or leave it empty for any revert error
               const txReciept = await tx.wait(1)
