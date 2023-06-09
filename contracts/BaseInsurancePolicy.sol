@@ -25,18 +25,18 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     modifier onlyOwner() {
         if (
             msg.sender != s_policy.policyHolder.policyHolderWalletAddress ||
-            msg.sender != s_policy.policyManagerContractAddress||
+            msg.sender != s_policy.policyManagerContractAddress ||
             msg.sender != address(this)
         ) {
             revert OnlyOwnerAllowed();
         }
         _;
     }
-    modifier isNotTerminated(){
-      if(s_policy.isTerminated){
-        revert PolicyTerminated();
-      }
-      _;
+    modifier isNotTerminated() {
+        if (s_policy.isTerminated) {
+            revert PolicyTerminated();
+        }
+        _;
     }
     // constant decimals
     uint256 private constant DECIMALS = 10 ** 18;
@@ -187,7 +187,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
             ) revert PolicyNotInGracePeriod();
 
             // amount should be close to revivalAmount
-            if (s_policy.revivalRule.revivalAmount - msg.value < (1 * DECIMALS) / 10000)
+            if (s_policy.revivalRule.revivalAmount - msg.value > (1 * DECIMALS) / 10000)
                 revert RevivalAmountNotCorrect();
 
             // set policy to active
@@ -197,7 +197,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         }
 
         // if premiumToBePaid is close to msg.value then revert
-        if (s_policy.premiumToBePaid - msg.value < (1 * DECIMALS) / 10000)
+        if (s_policy.premiumToBePaid - msg.value > (1 * DECIMALS) / 10000)
             revert PremiumAmountNotCorrect();
 
         // set lastTimestamp to current block.timestamp
@@ -205,7 +205,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         s_policy.hasFundedForCurrentMonth = true;
     }
 
-    function makeClaim() public onlyOwner {
+    function makeClaim() public onlyOwner returns (bool claimed) {
         if (!s_policy.isTerminated) revert PolicyTerminated();
         if (s_policy.isPolicyActive) revert PolicyNotActive();
 
@@ -216,7 +216,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         if (!s_policy.hasClaimed) revert PolicyAlreadyClaimed();
 
         s_policy.hasClaimed = true;
-        s_policy.policyHolder.policyHolderWalletAddress.transfer(s_policy.totalCoverageByPolicy);
+        return true;
     }
 
     function revivePolicy() public payable onlyOwner {

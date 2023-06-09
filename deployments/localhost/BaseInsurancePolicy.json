@@ -1,0 +1,1093 @@
+{
+  "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "dateOfBirth",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "gender",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "homeAddress",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "phoneNumber",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "pronouns",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "email",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "occupation",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address payable",
+                  "name": "policyHolderWalletAddress",
+                  "type": "address"
+                }
+              ],
+              "internalType": "struct SharedData.HumanDetails",
+              "name": "policyHolder",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint128",
+              "name": "policyTenure",
+              "type": "uint128"
+            },
+            {
+              "internalType": "uint128",
+              "name": "gracePeriod",
+              "type": "uint128"
+            },
+            {
+              "internalType": "uint128",
+              "name": "timeBeforeCommencement",
+              "type": "uint128"
+            },
+            {
+              "internalType": "uint256",
+              "name": "timeInterval",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "premiumToBePaid",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalCoverageByPolicy",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "hasClaimed",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isPolicyActive",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isClaimable",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "isTerminated",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "hasFundedForCurrentMonth",
+              "type": "bool"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint128",
+                  "name": "revivalPeriod",
+                  "type": "uint128"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "revivalAmount",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct SharedData.RevivalRule",
+              "name": "revivalRule",
+              "type": "tuple"
+            },
+            {
+              "internalType": "string",
+              "name": "policyDetails",
+              "type": "string"
+            },
+            {
+              "internalType": "enum SharedData.PolicyType",
+              "name": "policyType",
+              "type": "uint8"
+            },
+            {
+              "internalType": "address payable",
+              "name": "policyManagerContractAddress",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct SharedData.Policy",
+          "name": "policy",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "OnlyOwnerAllowed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "OnlySimulatedBackend",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyActive",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyAlreadyClaimed",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyNotActive",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyNotClaimable",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyNotFunded",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyNotInGracePeriod",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyNotMatured",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyNotRevivable",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PolicyTerminated",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "PremiumAmountNotCorrect",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "RevivalAmountNotCorrect",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "ChainlinkCancelled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "ChainlinkFulfilled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "id",
+          "type": "bytes32"
+        }
+      ],
+      "name": "ChainlinkRequested",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "checkData",
+          "type": "bytes"
+        }
+      ],
+      "name": "checkUpkeep",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "upkeepNeeded",
+          "type": "bool"
+        },
+        {
+          "internalType": "bytes",
+          "name": "performData",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getGracePeriod",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "gracePeriod",
+          "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getHasClaimed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "hasClaimed",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getIsClaimable",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "isClaimable",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getIsPolicyActive",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "isPolicyActive",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getIsTerminated",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "isTerminated",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPolicyDetails",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "policyDetails",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPolicyHolderDetails",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "dateOfBirth",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "gender",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "homeAddress",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "phoneNumber",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "pronouns",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "email",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "occupation",
+              "type": "string"
+            },
+            {
+              "internalType": "address payable",
+              "name": "policyHolderWalletAddress",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct SharedData.HumanDetails",
+          "name": "policyHolderDetails",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPolicyHolderWalletAddress",
+      "outputs": [
+        {
+          "internalType": "address payable",
+          "name": "policyHolderWalletAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPolicyTenure",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "policyTenure",
+          "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPolicyType",
+      "outputs": [
+        {
+          "internalType": "enum SharedData.PolicyType",
+          "name": "policyType",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getPremiumToBePaid",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "premiumToBePaid",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getRevivalRule",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint128",
+              "name": "revivalPeriod",
+              "type": "uint128"
+            },
+            {
+              "internalType": "uint256",
+              "name": "revivalAmount",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct SharedData.RevivalRule",
+          "name": "revivalRule",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTimeBeforeCommencement",
+      "outputs": [
+        {
+          "internalType": "uint128",
+          "name": "time",
+          "type": "uint128"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getTotalCoverageByPolicy",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "coverage",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "makeClaim",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "claimed",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "performData",
+          "type": "bytes"
+        }
+      ],
+      "name": "performUpkeep",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "revivePolicy",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "isClaimable",
+          "type": "bool"
+        }
+      ],
+      "name": "setClaimable",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "hasClaimed",
+          "type": "bool"
+        }
+      ],
+      "name": "setClaimed",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "hasFundedForCurrentMonth",
+          "type": "bool"
+        }
+      ],
+      "name": "setHasFundedForCurrentMonth",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "isPolicyActive",
+          "type": "bool"
+        }
+      ],
+      "name": "setPolicyActive",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bool",
+          "name": "isTerminate",
+          "type": "bool"
+        }
+      ],
+      "name": "setTermination",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "stateMutability": "payable",
+      "type": "receive"
+    }
+  ],
+  "transactionHash": "0x3c2c9c5505754e8d07c5e2f82109d1c8776b14b939b260877253804780325a03",
+  "receipt": {
+    "to": null,
+    "from": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    "contractAddress": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+    "transactionIndex": 0,
+    "gasUsed": "1756374",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x22c7e740d78b3976cf48e854707311d8426fc15019b1f7276009aec15bd4f5df",
+    "transactionHash": "0x3c2c9c5505754e8d07c5e2f82109d1c8776b14b939b260877253804780325a03",
+    "logs": [],
+    "blockNumber": 3,
+    "cumulativeGasUsed": "1756374",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    {
+      "policyHolder": {
+        "name": "_policyHolder",
+        "dateOfBirth": "1/1/1",
+        "gender": "homosexual dragon",
+        "homeAddress": "dragon raja land",
+        "phoneNumber": "123456789",
+        "email": "homodragon@phobo.com",
+        "occupation": "homodragonkiller",
+        "pronouns": "mighty/almighty",
+        "policyHolderWalletAddress": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+      },
+      "policyTenure": 5000,
+      "timeInterval": 30,
+      "gracePeriod": 15,
+      "timeBeforeCommencement": 60,
+      "premiumToBePaid": "1000000000000000000",
+      "totalCoverageByPolicy": "1000000000000000000000",
+      "hasClaimed": false,
+      "isPolicyActive": true,
+      "isClaimable": false,
+      "isTerminated": false,
+      "hasFundedForCurrentMonth": false,
+      "revivalRule": {
+        "revivalPeriod": 15,
+        "revivalAmount": "5000000000000000000"
+      },
+      "policyDetails": "This is a Dragon Contract",
+      "policyType": 0,
+      "policyManagerContractAddress": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
+    }
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "d2f183894369186c0f54a21e8b9ac313",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.18+commit.87f61d96\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"components\":[{\"components\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"dateOfBirth\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"gender\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"homeAddress\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"phoneNumber\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"pronouns\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"email\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"occupation\",\"type\":\"string\"},{\"internalType\":\"address payable\",\"name\":\"policyHolderWalletAddress\",\"type\":\"address\"}],\"internalType\":\"struct SharedData.HumanDetails\",\"name\":\"policyHolder\",\"type\":\"tuple\"},{\"internalType\":\"uint128\",\"name\":\"policyTenure\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"gracePeriod\",\"type\":\"uint128\"},{\"internalType\":\"uint128\",\"name\":\"timeBeforeCommencement\",\"type\":\"uint128\"},{\"internalType\":\"uint256\",\"name\":\"timeInterval\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"premiumToBePaid\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"totalCoverageByPolicy\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"hasClaimed\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"isPolicyActive\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"isClaimable\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"isTerminated\",\"type\":\"bool\"},{\"internalType\":\"bool\",\"name\":\"hasFundedForCurrentMonth\",\"type\":\"bool\"},{\"components\":[{\"internalType\":\"uint128\",\"name\":\"revivalPeriod\",\"type\":\"uint128\"},{\"internalType\":\"uint256\",\"name\":\"revivalAmount\",\"type\":\"uint256\"}],\"internalType\":\"struct SharedData.RevivalRule\",\"name\":\"revivalRule\",\"type\":\"tuple\"},{\"internalType\":\"string\",\"name\":\"policyDetails\",\"type\":\"string\"},{\"internalType\":\"enum SharedData.PolicyType\",\"name\":\"policyType\",\"type\":\"uint8\"},{\"internalType\":\"address payable\",\"name\":\"policyManagerContractAddress\",\"type\":\"address\"}],\"internalType\":\"struct SharedData.Policy\",\"name\":\"policy\",\"type\":\"tuple\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"OnlyOwnerAllowed\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"OnlySimulatedBackend\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyActive\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyAlreadyClaimed\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyNotActive\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyNotClaimable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyNotFunded\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyNotInGracePeriod\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyNotMatured\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyNotRevivable\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PolicyTerminated\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"PremiumAmountNotCorrect\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"RevivalAmountNotCorrect\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"ChainlinkCancelled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"ChainlinkFulfilled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"id\",\"type\":\"bytes32\"}],\"name\":\"ChainlinkRequested\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"checkData\",\"type\":\"bytes\"}],\"name\":\"checkUpkeep\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"upkeepNeeded\",\"type\":\"bool\"},{\"internalType\":\"bytes\",\"name\":\"performData\",\"type\":\"bytes\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getGracePeriod\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"gracePeriod\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getHasClaimed\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"hasClaimed\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getIsClaimable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isClaimable\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getIsPolicyActive\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isPolicyActive\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getIsTerminated\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"isTerminated\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPolicyDetails\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"policyDetails\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPolicyHolderDetails\",\"outputs\":[{\"components\":[{\"internalType\":\"string\",\"name\":\"name\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"dateOfBirth\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"gender\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"homeAddress\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"phoneNumber\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"pronouns\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"email\",\"type\":\"string\"},{\"internalType\":\"string\",\"name\":\"occupation\",\"type\":\"string\"},{\"internalType\":\"address payable\",\"name\":\"policyHolderWalletAddress\",\"type\":\"address\"}],\"internalType\":\"struct SharedData.HumanDetails\",\"name\":\"policyHolderDetails\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPolicyHolderWalletAddress\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"policyHolderWalletAddress\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPolicyTenure\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"policyTenure\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPolicyType\",\"outputs\":[{\"internalType\":\"enum SharedData.PolicyType\",\"name\":\"policyType\",\"type\":\"uint8\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getPremiumToBePaid\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"premiumToBePaid\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getRevivalRule\",\"outputs\":[{\"components\":[{\"internalType\":\"uint128\",\"name\":\"revivalPeriod\",\"type\":\"uint128\"},{\"internalType\":\"uint256\",\"name\":\"revivalAmount\",\"type\":\"uint256\"}],\"internalType\":\"struct SharedData.RevivalRule\",\"name\":\"revivalRule\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTimeBeforeCommencement\",\"outputs\":[{\"internalType\":\"uint128\",\"name\":\"time\",\"type\":\"uint128\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"getTotalCoverageByPolicy\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"coverage\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"makeClaim\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"claimed\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes\",\"name\":\"performData\",\"type\":\"bytes\"}],\"name\":\"performUpkeep\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"revivePolicy\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"isClaimable\",\"type\":\"bool\"}],\"name\":\"setClaimable\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"hasClaimed\",\"type\":\"bool\"}],\"name\":\"setClaimed\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"hasFundedForCurrentMonth\",\"type\":\"bool\"}],\"name\":\"setHasFundedForCurrentMonth\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"isPolicyActive\",\"type\":\"bool\"}],\"name\":\"setPolicyActive\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bool\",\"name\":\"isTerminate\",\"type\":\"bool\"}],\"name\":\"setTermination\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"stateMutability\":\"payable\",\"type\":\"receive\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"checkUpkeep(bytes)\":{\"details\":\"To ensure that it is never called, you may want to add the cannotExecute modifier from KeeperBase to your implementation of this method.\",\"params\":{\"checkData\":\"specified in the upkeep registration so it is always the same for a registered upkeep. This can easily be broken down into specific arguments using `abi.decode`, so multiple upkeeps can be registered on the same contract and easily differentiated by the contract.\"},\"returns\":{\"performData\":\"bytes that the keeper should call performUpkeep with, if upkeep is needed. If you would like to encode data to decode later, try `abi.encode`.\",\"upkeepNeeded\":\"boolean to indicate whether the keeper should call performUpkeep or not.\"}},\"performUpkeep(bytes)\":{\"details\":\"The input to this method should not be trusted, and the caller of the method should not even be restricted to any single registry. Anyone should be able call it, and the input should be validated, there is no guarantee that the data passed in is the performData returned from checkUpkeep. This could happen due to malicious keepers, racing keepers, or simply a state change while the performUpkeep transaction is waiting for confirmation. Always validate the data passed in.\",\"params\":{\"performData\":\"is the data which was passed back from the checkData simulation. If it is encoded, it can easily be decoded into other types by calling `abi.decode`. This data should not be trusted, and should be validated against the contract's current state.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"checkUpkeep(bytes)\":{\"notice\":\"method that is simulated by the keepers to see if any work actually needs to be performed. This method does does not actually need to be executable, and since it is only ever simulated it can consume lots of gas.\"},\"performUpkeep(bytes)\":{\"notice\":\"method that is actually executed by the keepers, via the registry. The data returned by the checkUpkeep simulation will be passed into this method to actually be executed.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/BaseInsurancePolicy.sol\":\"BaseInsurancePolicy\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":1000},\"remappings\":[]},\"sources\":{\"@chainlink/contracts/src/v0.8/AutomationBase.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ncontract AutomationBase {\\n  error OnlySimulatedBackend();\\n\\n  /**\\n   * @notice method that allows it to be simulated via eth_call by checking that\\n   * the sender is the zero address.\\n   */\\n  function preventExecution() internal view {\\n    if (tx.origin != address(0)) {\\n      revert OnlySimulatedBackend();\\n    }\\n  }\\n\\n  /**\\n   * @notice modifier that allows it to be simulated via eth_call by checking\\n   * that the sender is the zero address.\\n   */\\n  modifier cannotExecute() {\\n    preventExecution();\\n    _;\\n  }\\n}\\n\",\"keccak256\":\"0x5d354afa1a97dffe66094397cdcbb0c14713cf3d609d88fd8f9891010e9a351a\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/AutomationCompatible.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"./AutomationBase.sol\\\";\\nimport \\\"./interfaces/AutomationCompatibleInterface.sol\\\";\\n\\nabstract contract AutomationCompatible is AutomationBase, AutomationCompatibleInterface {}\\n\",\"keccak256\":\"0x40e5ae0eff4edd0740c1b5590d09c344f84dee031e82d5294563e99603774f80\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/Chainlink.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport {CBORChainlink} from \\\"./vendor/CBORChainlink.sol\\\";\\nimport {BufferChainlink} from \\\"./vendor/BufferChainlink.sol\\\";\\n\\n/**\\n * @title Library for common Chainlink functions\\n * @dev Uses imported CBOR library for encoding to buffer\\n */\\nlibrary Chainlink {\\n  uint256 internal constant defaultBufferSize = 256; // solhint-disable-line const-name-snakecase\\n\\n  using CBORChainlink for BufferChainlink.buffer;\\n\\n  struct Request {\\n    bytes32 id;\\n    address callbackAddress;\\n    bytes4 callbackFunctionId;\\n    uint256 nonce;\\n    BufferChainlink.buffer buf;\\n  }\\n\\n  /**\\n   * @notice Initializes a Chainlink request\\n   * @dev Sets the ID, callback address, and callback function signature on the request\\n   * @param self The uninitialized request\\n   * @param jobId The Job Specification ID\\n   * @param callbackAddr The callback address\\n   * @param callbackFunc The callback function signature\\n   * @return The initialized request\\n   */\\n  function initialize(\\n    Request memory self,\\n    bytes32 jobId,\\n    address callbackAddr,\\n    bytes4 callbackFunc\\n  ) internal pure returns (Chainlink.Request memory) {\\n    BufferChainlink.init(self.buf, defaultBufferSize);\\n    self.id = jobId;\\n    self.callbackAddress = callbackAddr;\\n    self.callbackFunctionId = callbackFunc;\\n    return self;\\n  }\\n\\n  /**\\n   * @notice Sets the data for the buffer without encoding CBOR on-chain\\n   * @dev CBOR can be closed with curly-brackets {} or they can be left off\\n   * @param self The initialized request\\n   * @param data The CBOR data\\n   */\\n  function setBuffer(Request memory self, bytes memory data) internal pure {\\n    BufferChainlink.init(self.buf, data.length);\\n    BufferChainlink.append(self.buf, data);\\n  }\\n\\n  /**\\n   * @notice Adds a string value to the request with a given key name\\n   * @param self The initialized request\\n   * @param key The name of the key\\n   * @param value The string value to add\\n   */\\n  function add(\\n    Request memory self,\\n    string memory key,\\n    string memory value\\n  ) internal pure {\\n    self.buf.encodeString(key);\\n    self.buf.encodeString(value);\\n  }\\n\\n  /**\\n   * @notice Adds a bytes value to the request with a given key name\\n   * @param self The initialized request\\n   * @param key The name of the key\\n   * @param value The bytes value to add\\n   */\\n  function addBytes(\\n    Request memory self,\\n    string memory key,\\n    bytes memory value\\n  ) internal pure {\\n    self.buf.encodeString(key);\\n    self.buf.encodeBytes(value);\\n  }\\n\\n  /**\\n   * @notice Adds a int256 value to the request with a given key name\\n   * @param self The initialized request\\n   * @param key The name of the key\\n   * @param value The int256 value to add\\n   */\\n  function addInt(\\n    Request memory self,\\n    string memory key,\\n    int256 value\\n  ) internal pure {\\n    self.buf.encodeString(key);\\n    self.buf.encodeInt(value);\\n  }\\n\\n  /**\\n   * @notice Adds a uint256 value to the request with a given key name\\n   * @param self The initialized request\\n   * @param key The name of the key\\n   * @param value The uint256 value to add\\n   */\\n  function addUint(\\n    Request memory self,\\n    string memory key,\\n    uint256 value\\n  ) internal pure {\\n    self.buf.encodeString(key);\\n    self.buf.encodeUInt(value);\\n  }\\n\\n  /**\\n   * @notice Adds an array of strings to the request with a given key name\\n   * @param self The initialized request\\n   * @param key The name of the key\\n   * @param values The array of string values to add\\n   */\\n  function addStringArray(\\n    Request memory self,\\n    string memory key,\\n    string[] memory values\\n  ) internal pure {\\n    self.buf.encodeString(key);\\n    self.buf.startArray();\\n    for (uint256 i = 0; i < values.length; i++) {\\n      self.buf.encodeString(values[i]);\\n    }\\n    self.buf.endSequence();\\n  }\\n}\\n\",\"keccak256\":\"0x3e133ddc69d0909fbe338c34b70cbf8dd262c70fd670b3632424c1858de25105\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/ChainlinkClient.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"./Chainlink.sol\\\";\\nimport \\\"./interfaces/ENSInterface.sol\\\";\\nimport \\\"./interfaces/LinkTokenInterface.sol\\\";\\nimport \\\"./interfaces/ChainlinkRequestInterface.sol\\\";\\nimport \\\"./interfaces/OperatorInterface.sol\\\";\\nimport \\\"./interfaces/PointerInterface.sol\\\";\\nimport {ENSResolver as ENSResolver_Chainlink} from \\\"./vendor/ENSResolver.sol\\\";\\n\\n/**\\n * @title The ChainlinkClient contract\\n * @notice Contract writers can inherit this contract in order to create requests for the\\n * Chainlink network\\n */\\nabstract contract ChainlinkClient {\\n  using Chainlink for Chainlink.Request;\\n\\n  uint256 internal constant LINK_DIVISIBILITY = 10**18;\\n  uint256 private constant AMOUNT_OVERRIDE = 0;\\n  address private constant SENDER_OVERRIDE = address(0);\\n  uint256 private constant ORACLE_ARGS_VERSION = 1;\\n  uint256 private constant OPERATOR_ARGS_VERSION = 2;\\n  bytes32 private constant ENS_TOKEN_SUBNAME = keccak256(\\\"link\\\");\\n  bytes32 private constant ENS_ORACLE_SUBNAME = keccak256(\\\"oracle\\\");\\n  address private constant LINK_TOKEN_POINTER = 0xC89bD4E1632D3A43CB03AAAd5262cbe4038Bc571;\\n\\n  ENSInterface private s_ens;\\n  bytes32 private s_ensNode;\\n  LinkTokenInterface private s_link;\\n  OperatorInterface private s_oracle;\\n  uint256 private s_requestCount = 1;\\n  mapping(bytes32 => address) private s_pendingRequests;\\n\\n  event ChainlinkRequested(bytes32 indexed id);\\n  event ChainlinkFulfilled(bytes32 indexed id);\\n  event ChainlinkCancelled(bytes32 indexed id);\\n\\n  /**\\n   * @notice Creates a request that can hold additional parameters\\n   * @param specId The Job Specification ID that the request will be created for\\n   * @param callbackAddr address to operate the callback on\\n   * @param callbackFunctionSignature function signature to use for the callback\\n   * @return A Chainlink Request struct in memory\\n   */\\n  function buildChainlinkRequest(\\n    bytes32 specId,\\n    address callbackAddr,\\n    bytes4 callbackFunctionSignature\\n  ) internal pure returns (Chainlink.Request memory) {\\n    Chainlink.Request memory req;\\n    return req.initialize(specId, callbackAddr, callbackFunctionSignature);\\n  }\\n\\n  /**\\n   * @notice Creates a request that can hold additional parameters\\n   * @param specId The Job Specification ID that the request will be created for\\n   * @param callbackFunctionSignature function signature to use for the callback\\n   * @return A Chainlink Request struct in memory\\n   */\\n  function buildOperatorRequest(bytes32 specId, bytes4 callbackFunctionSignature)\\n    internal\\n    view\\n    returns (Chainlink.Request memory)\\n  {\\n    Chainlink.Request memory req;\\n    return req.initialize(specId, address(this), callbackFunctionSignature);\\n  }\\n\\n  /**\\n   * @notice Creates a Chainlink request to the stored oracle address\\n   * @dev Calls `chainlinkRequestTo` with the stored oracle address\\n   * @param req The initialized Chainlink Request\\n   * @param payment The amount of LINK to send for the request\\n   * @return requestId The request ID\\n   */\\n  function sendChainlinkRequest(Chainlink.Request memory req, uint256 payment) internal returns (bytes32) {\\n    return sendChainlinkRequestTo(address(s_oracle), req, payment);\\n  }\\n\\n  /**\\n   * @notice Creates a Chainlink request to the specified oracle address\\n   * @dev Generates and stores a request ID, increments the local nonce, and uses `transferAndCall` to\\n   * send LINK which creates a request on the target oracle contract.\\n   * Emits ChainlinkRequested event.\\n   * @param oracleAddress The address of the oracle for the request\\n   * @param req The initialized Chainlink Request\\n   * @param payment The amount of LINK to send for the request\\n   * @return requestId The request ID\\n   */\\n  function sendChainlinkRequestTo(\\n    address oracleAddress,\\n    Chainlink.Request memory req,\\n    uint256 payment\\n  ) internal returns (bytes32 requestId) {\\n    uint256 nonce = s_requestCount;\\n    s_requestCount = nonce + 1;\\n    bytes memory encodedRequest = abi.encodeWithSelector(\\n      ChainlinkRequestInterface.oracleRequest.selector,\\n      SENDER_OVERRIDE, // Sender value - overridden by onTokenTransfer by the requesting contract's address\\n      AMOUNT_OVERRIDE, // Amount value - overridden by onTokenTransfer by the actual amount of LINK sent\\n      req.id,\\n      address(this),\\n      req.callbackFunctionId,\\n      nonce,\\n      ORACLE_ARGS_VERSION,\\n      req.buf.buf\\n    );\\n    return _rawRequest(oracleAddress, nonce, payment, encodedRequest);\\n  }\\n\\n  /**\\n   * @notice Creates a Chainlink request to the stored oracle address\\n   * @dev This function supports multi-word response\\n   * @dev Calls `sendOperatorRequestTo` with the stored oracle address\\n   * @param req The initialized Chainlink Request\\n   * @param payment The amount of LINK to send for the request\\n   * @return requestId The request ID\\n   */\\n  function sendOperatorRequest(Chainlink.Request memory req, uint256 payment) internal returns (bytes32) {\\n    return sendOperatorRequestTo(address(s_oracle), req, payment);\\n  }\\n\\n  /**\\n   * @notice Creates a Chainlink request to the specified oracle address\\n   * @dev This function supports multi-word response\\n   * @dev Generates and stores a request ID, increments the local nonce, and uses `transferAndCall` to\\n   * send LINK which creates a request on the target oracle contract.\\n   * Emits ChainlinkRequested event.\\n   * @param oracleAddress The address of the oracle for the request\\n   * @param req The initialized Chainlink Request\\n   * @param payment The amount of LINK to send for the request\\n   * @return requestId The request ID\\n   */\\n  function sendOperatorRequestTo(\\n    address oracleAddress,\\n    Chainlink.Request memory req,\\n    uint256 payment\\n  ) internal returns (bytes32 requestId) {\\n    uint256 nonce = s_requestCount;\\n    s_requestCount = nonce + 1;\\n    bytes memory encodedRequest = abi.encodeWithSelector(\\n      OperatorInterface.operatorRequest.selector,\\n      SENDER_OVERRIDE, // Sender value - overridden by onTokenTransfer by the requesting contract's address\\n      AMOUNT_OVERRIDE, // Amount value - overridden by onTokenTransfer by the actual amount of LINK sent\\n      req.id,\\n      req.callbackFunctionId,\\n      nonce,\\n      OPERATOR_ARGS_VERSION,\\n      req.buf.buf\\n    );\\n    return _rawRequest(oracleAddress, nonce, payment, encodedRequest);\\n  }\\n\\n  /**\\n   * @notice Make a request to an oracle\\n   * @param oracleAddress The address of the oracle for the request\\n   * @param nonce used to generate the request ID\\n   * @param payment The amount of LINK to send for the request\\n   * @param encodedRequest data encoded for request type specific format\\n   * @return requestId The request ID\\n   */\\n  function _rawRequest(\\n    address oracleAddress,\\n    uint256 nonce,\\n    uint256 payment,\\n    bytes memory encodedRequest\\n  ) private returns (bytes32 requestId) {\\n    requestId = keccak256(abi.encodePacked(this, nonce));\\n    s_pendingRequests[requestId] = oracleAddress;\\n    emit ChainlinkRequested(requestId);\\n    require(s_link.transferAndCall(oracleAddress, payment, encodedRequest), \\\"unable to transferAndCall to oracle\\\");\\n  }\\n\\n  /**\\n   * @notice Allows a request to be cancelled if it has not been fulfilled\\n   * @dev Requires keeping track of the expiration value emitted from the oracle contract.\\n   * Deletes the request from the `pendingRequests` mapping.\\n   * Emits ChainlinkCancelled event.\\n   * @param requestId The request ID\\n   * @param payment The amount of LINK sent for the request\\n   * @param callbackFunc The callback function specified for the request\\n   * @param expiration The time of the expiration for the request\\n   */\\n  function cancelChainlinkRequest(\\n    bytes32 requestId,\\n    uint256 payment,\\n    bytes4 callbackFunc,\\n    uint256 expiration\\n  ) internal {\\n    OperatorInterface requested = OperatorInterface(s_pendingRequests[requestId]);\\n    delete s_pendingRequests[requestId];\\n    emit ChainlinkCancelled(requestId);\\n    requested.cancelOracleRequest(requestId, payment, callbackFunc, expiration);\\n  }\\n\\n  /**\\n   * @notice the next request count to be used in generating a nonce\\n   * @dev starts at 1 in order to ensure consistent gas cost\\n   * @return returns the next request count to be used in a nonce\\n   */\\n  function getNextRequestCount() internal view returns (uint256) {\\n    return s_requestCount;\\n  }\\n\\n  /**\\n   * @notice Sets the stored oracle address\\n   * @param oracleAddress The address of the oracle contract\\n   */\\n  function setChainlinkOracle(address oracleAddress) internal {\\n    s_oracle = OperatorInterface(oracleAddress);\\n  }\\n\\n  /**\\n   * @notice Sets the LINK token address\\n   * @param linkAddress The address of the LINK token contract\\n   */\\n  function setChainlinkToken(address linkAddress) internal {\\n    s_link = LinkTokenInterface(linkAddress);\\n  }\\n\\n  /**\\n   * @notice Sets the Chainlink token address for the public\\n   * network as given by the Pointer contract\\n   */\\n  function setPublicChainlinkToken() internal {\\n    setChainlinkToken(PointerInterface(LINK_TOKEN_POINTER).getAddress());\\n  }\\n\\n  /**\\n   * @notice Retrieves the stored address of the LINK token\\n   * @return The address of the LINK token\\n   */\\n  function chainlinkTokenAddress() internal view returns (address) {\\n    return address(s_link);\\n  }\\n\\n  /**\\n   * @notice Retrieves the stored address of the oracle contract\\n   * @return The address of the oracle contract\\n   */\\n  function chainlinkOracleAddress() internal view returns (address) {\\n    return address(s_oracle);\\n  }\\n\\n  /**\\n   * @notice Allows for a request which was created on another contract to be fulfilled\\n   * on this contract\\n   * @param oracleAddress The address of the oracle contract that will fulfill the request\\n   * @param requestId The request ID used for the response\\n   */\\n  function addChainlinkExternalRequest(address oracleAddress, bytes32 requestId) internal notPendingRequest(requestId) {\\n    s_pendingRequests[requestId] = oracleAddress;\\n  }\\n\\n  /**\\n   * @notice Sets the stored oracle and LINK token contracts with the addresses resolved by ENS\\n   * @dev Accounts for subnodes having different resolvers\\n   * @param ensAddress The address of the ENS contract\\n   * @param node The ENS node hash\\n   */\\n  function useChainlinkWithENS(address ensAddress, bytes32 node) internal {\\n    s_ens = ENSInterface(ensAddress);\\n    s_ensNode = node;\\n    bytes32 linkSubnode = keccak256(abi.encodePacked(s_ensNode, ENS_TOKEN_SUBNAME));\\n    ENSResolver_Chainlink resolver = ENSResolver_Chainlink(s_ens.resolver(linkSubnode));\\n    setChainlinkToken(resolver.addr(linkSubnode));\\n    updateChainlinkOracleWithENS();\\n  }\\n\\n  /**\\n   * @notice Sets the stored oracle contract with the address resolved by ENS\\n   * @dev This may be called on its own as long as `useChainlinkWithENS` has been called previously\\n   */\\n  function updateChainlinkOracleWithENS() internal {\\n    bytes32 oracleSubnode = keccak256(abi.encodePacked(s_ensNode, ENS_ORACLE_SUBNAME));\\n    ENSResolver_Chainlink resolver = ENSResolver_Chainlink(s_ens.resolver(oracleSubnode));\\n    setChainlinkOracle(resolver.addr(oracleSubnode));\\n  }\\n\\n  /**\\n   * @notice Ensures that the fulfillment is valid for this contract\\n   * @dev Use if the contract developer prefers methods instead of modifiers for validation\\n   * @param requestId The request ID for fulfillment\\n   */\\n  function validateChainlinkCallback(bytes32 requestId)\\n    internal\\n    recordChainlinkFulfillment(requestId)\\n  // solhint-disable-next-line no-empty-blocks\\n  {\\n\\n  }\\n\\n  /**\\n   * @dev Reverts if the sender is not the oracle of the request.\\n   * Emits ChainlinkFulfilled event.\\n   * @param requestId The request ID for fulfillment\\n   */\\n  modifier recordChainlinkFulfillment(bytes32 requestId) {\\n    require(msg.sender == s_pendingRequests[requestId], \\\"Source must be the oracle of the request\\\");\\n    delete s_pendingRequests[requestId];\\n    emit ChainlinkFulfilled(requestId);\\n    _;\\n  }\\n\\n  /**\\n   * @dev Reverts if the request is already pending\\n   * @param requestId The request ID for fulfillment\\n   */\\n  modifier notPendingRequest(bytes32 requestId) {\\n    require(s_pendingRequests[requestId] == address(0), \\\"Request is already pending\\\");\\n    _;\\n  }\\n}\\n\",\"keccak256\":\"0xa221ccfa4763977cc78c57e3a83d47f5aaf7c15535a2c20dba5f46af80fb3bd7\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/interfaces/AutomationCompatibleInterface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface AutomationCompatibleInterface {\\n  /**\\n   * @notice method that is simulated by the keepers to see if any work actually\\n   * needs to be performed. This method does does not actually need to be\\n   * executable, and since it is only ever simulated it can consume lots of gas.\\n   * @dev To ensure that it is never called, you may want to add the\\n   * cannotExecute modifier from KeeperBase to your implementation of this\\n   * method.\\n   * @param checkData specified in the upkeep registration so it is always the\\n   * same for a registered upkeep. This can easily be broken down into specific\\n   * arguments using `abi.decode`, so multiple upkeeps can be registered on the\\n   * same contract and easily differentiated by the contract.\\n   * @return upkeepNeeded boolean to indicate whether the keeper should call\\n   * performUpkeep or not.\\n   * @return performData bytes that the keeper should call performUpkeep with, if\\n   * upkeep is needed. If you would like to encode data to decode later, try\\n   * `abi.encode`.\\n   */\\n  function checkUpkeep(bytes calldata checkData) external returns (bool upkeepNeeded, bytes memory performData);\\n\\n  /**\\n   * @notice method that is actually executed by the keepers, via the registry.\\n   * The data returned by the checkUpkeep simulation will be passed into\\n   * this method to actually be executed.\\n   * @dev The input to this method should not be trusted, and the caller of the\\n   * method should not even be restricted to any single registry. Anyone should\\n   * be able call it, and the input should be validated, there is no guarantee\\n   * that the data passed in is the performData returned from checkUpkeep. This\\n   * could happen due to malicious keepers, racing keepers, or simply a state\\n   * change while the performUpkeep transaction is waiting for confirmation.\\n   * Always validate the data passed in.\\n   * @param performData is the data which was passed back from the checkData\\n   * simulation. If it is encoded, it can easily be decoded into other types by\\n   * calling `abi.decode`. This data should not be trusted, and should be\\n   * validated against the contract's current state.\\n   */\\n  function performUpkeep(bytes calldata performData) external;\\n}\\n\",\"keccak256\":\"0x67076747c6f66d8d43472a56e72879c350056bff82e069addaf9064922863340\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/interfaces/ChainlinkRequestInterface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface ChainlinkRequestInterface {\\n  function oracleRequest(\\n    address sender,\\n    uint256 requestPrice,\\n    bytes32 serviceAgreementID,\\n    address callbackAddress,\\n    bytes4 callbackFunctionId,\\n    uint256 nonce,\\n    uint256 dataVersion,\\n    bytes calldata data\\n  ) external;\\n\\n  function cancelOracleRequest(\\n    bytes32 requestId,\\n    uint256 payment,\\n    bytes4 callbackFunctionId,\\n    uint256 expiration\\n  ) external;\\n}\\n\",\"keccak256\":\"0xa8adfbd0326c982c38ea3808a4da52f0a51807241787c4bd28235bbe86707c04\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/interfaces/ENSInterface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface ENSInterface {\\n  // Logged when the owner of a node assigns a new owner to a subnode.\\n  event NewOwner(bytes32 indexed node, bytes32 indexed label, address owner);\\n\\n  // Logged when the owner of a node transfers ownership to a new account.\\n  event Transfer(bytes32 indexed node, address owner);\\n\\n  // Logged when the resolver for a node changes.\\n  event NewResolver(bytes32 indexed node, address resolver);\\n\\n  // Logged when the TTL of a node changes\\n  event NewTTL(bytes32 indexed node, uint64 ttl);\\n\\n  function setSubnodeOwner(\\n    bytes32 node,\\n    bytes32 label,\\n    address owner\\n  ) external;\\n\\n  function setResolver(bytes32 node, address resolver) external;\\n\\n  function setOwner(bytes32 node, address owner) external;\\n\\n  function setTTL(bytes32 node, uint64 ttl) external;\\n\\n  function owner(bytes32 node) external view returns (address);\\n\\n  function resolver(bytes32 node) external view returns (address);\\n\\n  function ttl(bytes32 node) external view returns (uint64);\\n}\\n\",\"keccak256\":\"0xe51365458d82233a55f5ad4492a3b6bf56332d21cad6b0a5f21b8a026fcfd6d0\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface LinkTokenInterface {\\n  function allowance(address owner, address spender) external view returns (uint256 remaining);\\n\\n  function approve(address spender, uint256 value) external returns (bool success);\\n\\n  function balanceOf(address owner) external view returns (uint256 balance);\\n\\n  function decimals() external view returns (uint8 decimalPlaces);\\n\\n  function decreaseApproval(address spender, uint256 addedValue) external returns (bool success);\\n\\n  function increaseApproval(address spender, uint256 subtractedValue) external;\\n\\n  function name() external view returns (string memory tokenName);\\n\\n  function symbol() external view returns (string memory tokenSymbol);\\n\\n  function totalSupply() external view returns (uint256 totalTokensIssued);\\n\\n  function transfer(address to, uint256 value) external returns (bool success);\\n\\n  function transferAndCall(\\n    address to,\\n    uint256 value,\\n    bytes calldata data\\n  ) external returns (bool success);\\n\\n  function transferFrom(\\n    address from,\\n    address to,\\n    uint256 value\\n  ) external returns (bool success);\\n}\\n\",\"keccak256\":\"0xc7d7cd730d36825485ef4107d93c3ff18b9f3a5a00ea3d5988ba9a0bd70b10c5\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/interfaces/OperatorInterface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"./OracleInterface.sol\\\";\\nimport \\\"./ChainlinkRequestInterface.sol\\\";\\n\\ninterface OperatorInterface is OracleInterface, ChainlinkRequestInterface {\\n  function operatorRequest(\\n    address sender,\\n    uint256 payment,\\n    bytes32 specId,\\n    bytes4 callbackFunctionId,\\n    uint256 nonce,\\n    uint256 dataVersion,\\n    bytes calldata data\\n  ) external;\\n\\n  function fulfillOracleRequest2(\\n    bytes32 requestId,\\n    uint256 payment,\\n    address callbackAddress,\\n    bytes4 callbackFunctionId,\\n    uint256 expiration,\\n    bytes calldata data\\n  ) external returns (bool);\\n\\n  function ownerTransferAndCall(\\n    address to,\\n    uint256 value,\\n    bytes calldata data\\n  ) external returns (bool success);\\n\\n  function distributeFunds(address payable[] calldata receivers, uint256[] calldata amounts) external payable;\\n\\n  function getAuthorizedSenders() external returns (address[] memory);\\n\\n  function setAuthorizedSenders(address[] calldata senders) external;\\n\\n  function getForwarder() external returns (address);\\n}\\n\",\"keccak256\":\"0x79a7c77b8f87be6ef02a566765077ed599724b060a209f34f8907eec5615da68\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/interfaces/OracleInterface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface OracleInterface {\\n  function fulfillOracleRequest(\\n    bytes32 requestId,\\n    uint256 payment,\\n    address callbackAddress,\\n    bytes4 callbackFunctionId,\\n    uint256 expiration,\\n    bytes32 data\\n  ) external returns (bool);\\n\\n  function isAuthorizedSender(address node) external view returns (bool);\\n\\n  function withdraw(address recipient, uint256 amount) external;\\n\\n  function withdrawable() external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x3a86242e005bad9daf1b4794399a81ba373069355f38c8a07b58e57abc32513a\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/interfaces/PointerInterface.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface PointerInterface {\\n  function getAddress() external view returns (address);\\n}\\n\",\"keccak256\":\"0x42e5d62984f9d57bab7e32b2c6e3af86f4feb232ea2af6c822032fae88203bd7\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/vendor/BufferChainlink.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev A library for working with mutable byte buffers in Solidity.\\n *\\n * Byte buffers are mutable and expandable, and provide a variety of primitives\\n * for writing to them. At any time you can fetch a bytes object containing the\\n * current contents of the buffer. The bytes object should not be stored between\\n * operations, as it may change due to resizing of the buffer.\\n */\\nlibrary BufferChainlink {\\n  /**\\n   * @dev Represents a mutable buffer. Buffers have a current value (buf) and\\n   *      a capacity. The capacity may be longer than the current value, in\\n   *      which case it can be extended without the need to allocate more memory.\\n   */\\n  struct buffer {\\n    bytes buf;\\n    uint256 capacity;\\n  }\\n\\n  /**\\n   * @dev Initializes a buffer with an initial capacity.\\n   * @param buf The buffer to initialize.\\n   * @param capacity The number of bytes of space to allocate the buffer.\\n   * @return The buffer, for chaining.\\n   */\\n  function init(buffer memory buf, uint256 capacity) internal pure returns (buffer memory) {\\n    if (capacity % 32 != 0) {\\n      capacity += 32 - (capacity % 32);\\n    }\\n    // Allocate space for the buffer data\\n    buf.capacity = capacity;\\n    assembly {\\n      let ptr := mload(0x40)\\n      mstore(buf, ptr)\\n      mstore(ptr, 0)\\n      mstore(0x40, add(32, add(ptr, capacity)))\\n    }\\n    return buf;\\n  }\\n\\n  /**\\n   * @dev Initializes a new buffer from an existing bytes object.\\n   *      Changes to the buffer may mutate the original value.\\n   * @param b The bytes object to initialize the buffer with.\\n   * @return A new buffer.\\n   */\\n  function fromBytes(bytes memory b) internal pure returns (buffer memory) {\\n    buffer memory buf;\\n    buf.buf = b;\\n    buf.capacity = b.length;\\n    return buf;\\n  }\\n\\n  function resize(buffer memory buf, uint256 capacity) private pure {\\n    bytes memory oldbuf = buf.buf;\\n    init(buf, capacity);\\n    append(buf, oldbuf);\\n  }\\n\\n  function max(uint256 a, uint256 b) private pure returns (uint256) {\\n    if (a > b) {\\n      return a;\\n    }\\n    return b;\\n  }\\n\\n  /**\\n   * @dev Sets buffer length to 0.\\n   * @param buf The buffer to truncate.\\n   * @return The original buffer, for chaining..\\n   */\\n  function truncate(buffer memory buf) internal pure returns (buffer memory) {\\n    assembly {\\n      let bufptr := mload(buf)\\n      mstore(bufptr, 0)\\n    }\\n    return buf;\\n  }\\n\\n  /**\\n   * @dev Writes a byte string to a buffer. Resizes if doing so would exceed\\n   *      the capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param off The start offset to write to.\\n   * @param data The data to append.\\n   * @param len The number of bytes to copy.\\n   * @return The original buffer, for chaining.\\n   */\\n  function write(\\n    buffer memory buf,\\n    uint256 off,\\n    bytes memory data,\\n    uint256 len\\n  ) internal pure returns (buffer memory) {\\n    require(len <= data.length);\\n\\n    if (off + len > buf.capacity) {\\n      resize(buf, max(buf.capacity, len + off) * 2);\\n    }\\n\\n    uint256 dest;\\n    uint256 src;\\n    assembly {\\n      // Memory address of the buffer data\\n      let bufptr := mload(buf)\\n      // Length of existing buffer data\\n      let buflen := mload(bufptr)\\n      // Start address = buffer address + offset + sizeof(buffer length)\\n      dest := add(add(bufptr, 32), off)\\n      // Update buffer length if we're extending it\\n      if gt(add(len, off), buflen) {\\n        mstore(bufptr, add(len, off))\\n      }\\n      src := add(data, 32)\\n    }\\n\\n    // Copy word-length chunks while possible\\n    for (; len >= 32; len -= 32) {\\n      assembly {\\n        mstore(dest, mload(src))\\n      }\\n      dest += 32;\\n      src += 32;\\n    }\\n\\n    // Copy remaining bytes\\n    unchecked {\\n      uint256 mask = (256**(32 - len)) - 1;\\n      assembly {\\n        let srcpart := and(mload(src), not(mask))\\n        let destpart := and(mload(dest), mask)\\n        mstore(dest, or(destpart, srcpart))\\n      }\\n    }\\n\\n    return buf;\\n  }\\n\\n  /**\\n   * @dev Appends a byte string to a buffer. Resizes if doing so would exceed\\n   *      the capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param data The data to append.\\n   * @param len The number of bytes to copy.\\n   * @return The original buffer, for chaining.\\n   */\\n  function append(\\n    buffer memory buf,\\n    bytes memory data,\\n    uint256 len\\n  ) internal pure returns (buffer memory) {\\n    return write(buf, buf.buf.length, data, len);\\n  }\\n\\n  /**\\n   * @dev Appends a byte string to a buffer. Resizes if doing so would exceed\\n   *      the capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param data The data to append.\\n   * @return The original buffer, for chaining.\\n   */\\n  function append(buffer memory buf, bytes memory data) internal pure returns (buffer memory) {\\n    return write(buf, buf.buf.length, data, data.length);\\n  }\\n\\n  /**\\n   * @dev Writes a byte to the buffer. Resizes if doing so would exceed the\\n   *      capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param off The offset to write the byte at.\\n   * @param data The data to append.\\n   * @return The original buffer, for chaining.\\n   */\\n  function writeUint8(\\n    buffer memory buf,\\n    uint256 off,\\n    uint8 data\\n  ) internal pure returns (buffer memory) {\\n    if (off >= buf.capacity) {\\n      resize(buf, buf.capacity * 2);\\n    }\\n\\n    assembly {\\n      // Memory address of the buffer data\\n      let bufptr := mload(buf)\\n      // Length of existing buffer data\\n      let buflen := mload(bufptr)\\n      // Address = buffer address + sizeof(buffer length) + off\\n      let dest := add(add(bufptr, off), 32)\\n      mstore8(dest, data)\\n      // Update buffer length if we extended it\\n      if eq(off, buflen) {\\n        mstore(bufptr, add(buflen, 1))\\n      }\\n    }\\n    return buf;\\n  }\\n\\n  /**\\n   * @dev Appends a byte to the buffer. Resizes if doing so would exceed the\\n   *      capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param data The data to append.\\n   * @return The original buffer, for chaining.\\n   */\\n  function appendUint8(buffer memory buf, uint8 data) internal pure returns (buffer memory) {\\n    return writeUint8(buf, buf.buf.length, data);\\n  }\\n\\n  /**\\n   * @dev Writes up to 32 bytes to the buffer. Resizes if doing so would\\n   *      exceed the capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param off The offset to write at.\\n   * @param data The data to append.\\n   * @param len The number of bytes to write (left-aligned).\\n   * @return The original buffer, for chaining.\\n   */\\n  function write(\\n    buffer memory buf,\\n    uint256 off,\\n    bytes32 data,\\n    uint256 len\\n  ) private pure returns (buffer memory) {\\n    if (len + off > buf.capacity) {\\n      resize(buf, (len + off) * 2);\\n    }\\n\\n    unchecked {\\n      uint256 mask = (256**len) - 1;\\n      // Right-align data\\n      data = data >> (8 * (32 - len));\\n      assembly {\\n        // Memory address of the buffer data\\n        let bufptr := mload(buf)\\n        // Address = buffer address + sizeof(buffer length) + off + len\\n        let dest := add(add(bufptr, off), len)\\n        mstore(dest, or(and(mload(dest), not(mask)), data))\\n        // Update buffer length if we extended it\\n        if gt(add(off, len), mload(bufptr)) {\\n          mstore(bufptr, add(off, len))\\n        }\\n      }\\n    }\\n    return buf;\\n  }\\n\\n  /**\\n   * @dev Writes a bytes20 to the buffer. Resizes if doing so would exceed the\\n   *      capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param off The offset to write at.\\n   * @param data The data to append.\\n   * @return The original buffer, for chaining.\\n   */\\n  function writeBytes20(\\n    buffer memory buf,\\n    uint256 off,\\n    bytes20 data\\n  ) internal pure returns (buffer memory) {\\n    return write(buf, off, bytes32(data), 20);\\n  }\\n\\n  /**\\n   * @dev Appends a bytes20 to the buffer. Resizes if doing so would exceed\\n   *      the capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param data The data to append.\\n   * @return The original buffer, for chhaining.\\n   */\\n  function appendBytes20(buffer memory buf, bytes20 data) internal pure returns (buffer memory) {\\n    return write(buf, buf.buf.length, bytes32(data), 20);\\n  }\\n\\n  /**\\n   * @dev Appends a bytes32 to the buffer. Resizes if doing so would exceed\\n   *      the capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param data The data to append.\\n   * @return The original buffer, for chaining.\\n   */\\n  function appendBytes32(buffer memory buf, bytes32 data) internal pure returns (buffer memory) {\\n    return write(buf, buf.buf.length, data, 32);\\n  }\\n\\n  /**\\n   * @dev Writes an integer to the buffer. Resizes if doing so would exceed\\n   *      the capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param off The offset to write at.\\n   * @param data The data to append.\\n   * @param len The number of bytes to write (right-aligned).\\n   * @return The original buffer, for chaining.\\n   */\\n  function writeInt(\\n    buffer memory buf,\\n    uint256 off,\\n    uint256 data,\\n    uint256 len\\n  ) private pure returns (buffer memory) {\\n    if (len + off > buf.capacity) {\\n      resize(buf, (len + off) * 2);\\n    }\\n\\n    uint256 mask = (256**len) - 1;\\n    assembly {\\n      // Memory address of the buffer data\\n      let bufptr := mload(buf)\\n      // Address = buffer address + off + sizeof(buffer length) + len\\n      let dest := add(add(bufptr, off), len)\\n      mstore(dest, or(and(mload(dest), not(mask)), data))\\n      // Update buffer length if we extended it\\n      if gt(add(off, len), mload(bufptr)) {\\n        mstore(bufptr, add(off, len))\\n      }\\n    }\\n    return buf;\\n  }\\n\\n  /**\\n   * @dev Appends a byte to the end of the buffer. Resizes if doing so would\\n   * exceed the capacity of the buffer.\\n   * @param buf The buffer to append to.\\n   * @param data The data to append.\\n   * @return The original buffer.\\n   */\\n  function appendInt(\\n    buffer memory buf,\\n    uint256 data,\\n    uint256 len\\n  ) internal pure returns (buffer memory) {\\n    return writeInt(buf, buf.buf.length, data, len);\\n  }\\n}\\n\",\"keccak256\":\"0x89388a631c16ad993e4d76d8d19e08ae98e1397f5dfdfb5f9c0b91015df4cf5d\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/vendor/CBORChainlink.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity >=0.4.19;\\n\\nimport {BufferChainlink} from \\\"./BufferChainlink.sol\\\";\\n\\nlibrary CBORChainlink {\\n  using BufferChainlink for BufferChainlink.buffer;\\n\\n  uint8 private constant MAJOR_TYPE_INT = 0;\\n  uint8 private constant MAJOR_TYPE_NEGATIVE_INT = 1;\\n  uint8 private constant MAJOR_TYPE_BYTES = 2;\\n  uint8 private constant MAJOR_TYPE_STRING = 3;\\n  uint8 private constant MAJOR_TYPE_ARRAY = 4;\\n  uint8 private constant MAJOR_TYPE_MAP = 5;\\n  uint8 private constant MAJOR_TYPE_TAG = 6;\\n  uint8 private constant MAJOR_TYPE_CONTENT_FREE = 7;\\n\\n  uint8 private constant TAG_TYPE_BIGNUM = 2;\\n  uint8 private constant TAG_TYPE_NEGATIVE_BIGNUM = 3;\\n\\n  function encodeFixedNumeric(BufferChainlink.buffer memory buf, uint8 major, uint64 value) private pure {\\n    if(value <= 23) {\\n      buf.appendUint8(uint8((major << 5) | value));\\n    } else if (value <= 0xFF) {\\n      buf.appendUint8(uint8((major << 5) | 24));\\n      buf.appendInt(value, 1);\\n    } else if (value <= 0xFFFF) {\\n      buf.appendUint8(uint8((major << 5) | 25));\\n      buf.appendInt(value, 2);\\n    } else if (value <= 0xFFFFFFFF) {\\n      buf.appendUint8(uint8((major << 5) | 26));\\n      buf.appendInt(value, 4);\\n    } else {\\n      buf.appendUint8(uint8((major << 5) | 27));\\n      buf.appendInt(value, 8);\\n    }\\n  }\\n\\n  function encodeIndefiniteLengthType(BufferChainlink.buffer memory buf, uint8 major) private pure {\\n    buf.appendUint8(uint8((major << 5) | 31));\\n  }\\n\\n  function encodeUInt(BufferChainlink.buffer memory buf, uint value) internal pure {\\n    if(value > 0xFFFFFFFFFFFFFFFF) {\\n      encodeBigNum(buf, value);\\n    } else {\\n      encodeFixedNumeric(buf, MAJOR_TYPE_INT, uint64(value));\\n    }\\n  }\\n\\n  function encodeInt(BufferChainlink.buffer memory buf, int value) internal pure {\\n    if(value < -0x10000000000000000) {\\n      encodeSignedBigNum(buf, value);\\n    } else if(value > 0xFFFFFFFFFFFFFFFF) {\\n      encodeBigNum(buf, uint(value));\\n    } else if(value >= 0) {\\n      encodeFixedNumeric(buf, MAJOR_TYPE_INT, uint64(uint256(value)));\\n    } else {\\n      encodeFixedNumeric(buf, MAJOR_TYPE_NEGATIVE_INT, uint64(uint256(-1 - value)));\\n    }\\n  }\\n\\n  function encodeBytes(BufferChainlink.buffer memory buf, bytes memory value) internal pure {\\n    encodeFixedNumeric(buf, MAJOR_TYPE_BYTES, uint64(value.length));\\n    buf.append(value);\\n  }\\n\\n  function encodeBigNum(BufferChainlink.buffer memory buf, uint value) internal pure {\\n    buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_BIGNUM));\\n    encodeBytes(buf, abi.encode(value));\\n  }\\n\\n  function encodeSignedBigNum(BufferChainlink.buffer memory buf, int input) internal pure {\\n    buf.appendUint8(uint8((MAJOR_TYPE_TAG << 5) | TAG_TYPE_NEGATIVE_BIGNUM));\\n    encodeBytes(buf, abi.encode(uint256(-1 - input)));\\n  }\\n\\n  function encodeString(BufferChainlink.buffer memory buf, string memory value) internal pure {\\n    encodeFixedNumeric(buf, MAJOR_TYPE_STRING, uint64(bytes(value).length));\\n    buf.append(bytes(value));\\n  }\\n\\n  function startArray(BufferChainlink.buffer memory buf) internal pure {\\n    encodeIndefiniteLengthType(buf, MAJOR_TYPE_ARRAY);\\n  }\\n\\n  function startMap(BufferChainlink.buffer memory buf) internal pure {\\n    encodeIndefiniteLengthType(buf, MAJOR_TYPE_MAP);\\n  }\\n\\n  function endSequence(BufferChainlink.buffer memory buf) internal pure {\\n    encodeIndefiniteLengthType(buf, MAJOR_TYPE_CONTENT_FREE);\\n  }\\n}\\n\",\"keccak256\":\"0x08bda450d4dc1d17147fd29810234d35e2c437f1a99be733cfa7ee516db08a48\",\"license\":\"MIT\"},\"@chainlink/contracts/src/v0.8/vendor/ENSResolver.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nabstract contract ENSResolver {\\n  function addr(bytes32 node) public view virtual returns (address);\\n}\\n\",\"keccak256\":\"0x606bda5f3fa27be4cf04f6636dda443b7787b56e87ade988fca2e51d2147613d\",\"license\":\"MIT\"},\"contracts/BaseInsurancePolicy.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.0;\\r\\n\\r\\nimport \\\"./SharedData.sol\\\";\\r\\nimport \\\"@chainlink/contracts/src/v0.8/AutomationCompatible.sol\\\";\\r\\nimport \\\"@chainlink/contracts/src/v0.8/ChainlinkClient.sol\\\";\\r\\n\\r\\ncontract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {\\r\\n    SharedData.Policy internal s_policy;\\r\\n    uint256 private s_lastPaymentTimestamp;\\r\\n    uint256 private s_startTimestamp;\\r\\n\\r\\n    error OnlyOwnerAllowed();\\r\\n    error PolicyNotActive();\\r\\n    error PolicyTerminated();\\r\\n    error PolicyNotClaimable();\\r\\n    error PolicyAlreadyClaimed();\\r\\n    error PolicyNotRevivable();\\r\\n    error PolicyNotFunded();\\r\\n    error PolicyNotMatured();\\r\\n    error PolicyNotInGracePeriod();\\r\\n    error RevivalAmountNotCorrect();\\r\\n    error PremiumAmountNotCorrect();\\r\\n    error PolicyActive();\\r\\n    modifier onlyOwner() {\\r\\n        if (\\r\\n            msg.sender != s_policy.policyHolder.policyHolderWalletAddress ||\\r\\n            msg.sender != s_policy.policyManagerContractAddress ||\\r\\n            msg.sender != address(this)\\r\\n        ) {\\r\\n            revert OnlyOwnerAllowed();\\r\\n        }\\r\\n        _;\\r\\n    }\\r\\n    modifier isNotTerminated() {\\r\\n        if (s_policy.isTerminated) {\\r\\n            revert PolicyTerminated();\\r\\n        }\\r\\n        _;\\r\\n    }\\r\\n    // constant decimals\\r\\n    uint256 private constant DECIMALS = 10 ** 18;\\r\\n\\r\\n    constructor(SharedData.Policy memory policy) {\\r\\n        s_policy = policy;\\r\\n    }\\r\\n\\r\\n    // Setter functions\\r\\n\\r\\n    function setTermination(bool isTerminate) public onlyOwner {\\r\\n        s_policy.isTerminated = isTerminate;\\r\\n    }\\r\\n\\r\\n    function setClaimable(bool isClaimable) public onlyOwner {\\r\\n        s_policy.isClaimable = isClaimable;\\r\\n    }\\r\\n\\r\\n    function setClaimed(bool hasClaimed) public onlyOwner {\\r\\n        s_policy.hasClaimed = hasClaimed;\\r\\n    }\\r\\n\\r\\n    function setPolicyActive(bool isPolicyActive) public onlyOwner {\\r\\n        s_policy.isPolicyActive = isPolicyActive;\\r\\n    }\\r\\n\\r\\n    function setHasFundedForCurrentMonth(bool hasFundedForCurrentMonth) public onlyOwner {\\r\\n        s_policy.hasFundedForCurrentMonth = hasFundedForCurrentMonth;\\r\\n    }\\r\\n\\r\\n    // getter functions\\r\\n    function getPolicyHolderDetails()\\r\\n        public\\r\\n        view\\r\\n        returns (SharedData.HumanDetails memory policyHolderDetails)\\r\\n    {\\r\\n        return s_policy.policyHolder;\\r\\n    }\\r\\n\\r\\n    function getPolicyTenure() public view returns (uint128 policyTenure) {\\r\\n        return s_policy.policyTenure;\\r\\n    }\\r\\n\\r\\n    function getGracePeriod() public view returns (uint128 gracePeriod) {\\r\\n        return s_policy.gracePeriod;\\r\\n    }\\r\\n\\r\\n    function getTimeBeforeCommencement() public view returns (uint128 time) {\\r\\n        return s_policy.timeBeforeCommencement;\\r\\n    }\\r\\n\\r\\n    function getPremiumToBePaid() public view returns (uint256 premiumToBePaid) {\\r\\n        return s_policy.premiumToBePaid;\\r\\n    }\\r\\n\\r\\n    function getTotalCoverageByPolicy() public view returns (uint256 coverage) {\\r\\n        return s_policy.totalCoverageByPolicy;\\r\\n    }\\r\\n\\r\\n    function getPolicyDetails() public view returns (string memory policyDetails) {\\r\\n        return s_policy.policyDetails;\\r\\n    }\\r\\n\\r\\n    function getRevivalRule() public view returns (SharedData.RevivalRule memory revivalRule) {\\r\\n        return s_policy.revivalRule;\\r\\n    }\\r\\n\\r\\n    function getHasClaimed() public view returns (bool hasClaimed) {\\r\\n        return s_policy.hasClaimed;\\r\\n    }\\r\\n\\r\\n    function getIsPolicyActive() public view returns (bool isPolicyActive) {\\r\\n        return s_policy.isPolicyActive;\\r\\n    }\\r\\n\\r\\n    function getIsClaimable() public view returns (bool isClaimable) {\\r\\n        return s_policy.isClaimable;\\r\\n    }\\r\\n\\r\\n    function getIsTerminated() public view returns (bool isTerminated) {\\r\\n        return s_policy.isTerminated;\\r\\n    }\\r\\n\\r\\n    function getPolicyHolderWalletAddress()\\r\\n        public\\r\\n        view\\r\\n        returns (address payable policyHolderWalletAddress)\\r\\n    {\\r\\n        return s_policy.policyHolder.policyHolderWalletAddress;\\r\\n    }\\r\\n\\r\\n    function getPolicyType() public view returns (SharedData.PolicyType policyType) {\\r\\n        return s_policy.policyType;\\r\\n    }\\r\\n\\r\\n    // chainlink functions\\r\\n    function checkUpkeep(\\r\\n        bytes calldata checkData\\r\\n    ) external view override returns (bool upkeepNeeded, bytes memory performData) {\\r\\n        // if policy is terminated then revert\\r\\n        if (s_policy.isTerminated) {\\r\\n            upkeepNeeded = false;\\r\\n            performData = \\\"Policy is terminated\\\";\\r\\n        }\\r\\n\\r\\n        // if policy is not active then revert\\r\\n        if (!s_policy.isPolicyActive) {\\r\\n            // if revivalPeriod is over then revert\\r\\n            if (\\r\\n                block.timestamp - s_lastPaymentTimestamp >\\r\\n                s_policy.gracePeriod + s_policy.revivalRule.revivalPeriod //* seconds\\r\\n            ) {\\r\\n                upkeepNeeded = false;\\r\\n                performData = \\\"Revival period is over\\\";\\r\\n            }\\r\\n        }\\r\\n\\r\\n        upkeepNeeded = (block.timestamp - s_lastPaymentTimestamp) > s_policy.timeInterval;\\r\\n        performData = \\\"Upkeep is needed\\\";\\r\\n    }\\r\\n\\r\\n    function performUpkeep(bytes calldata performData) external override {\\r\\n        s_policy.hasFundedForCurrentMonth = false;\\r\\n\\r\\n        // if gracePeriod is over then revert\\r\\n        if (\\r\\n            block.timestamp - s_lastPaymentTimestamp > s_policy.gracePeriod //* seconds\\r\\n        ) s_policy.isPolicyActive = false;\\r\\n\\r\\n        // if revivalPeriod is over then revert\\r\\n        if (\\r\\n            block.timestamp - s_lastPaymentTimestamp >\\r\\n            s_policy.gracePeriod + s_policy.revivalRule.revivalPeriod //* seconds\\r\\n        ) s_policy.isTerminated = true;\\r\\n    }\\r\\n\\r\\n    // fallback\\r\\n    receive() external payable {\\r\\n        // if policy is terminated then revert\\r\\n        if (!s_policy.isTerminated) revert PolicyTerminated();\\r\\n\\r\\n        // if policy is not active then revert\\r\\n        if (!s_policy.isPolicyActive) {\\r\\n            // if revivalPeriod is over then revert\\r\\n            if (\\r\\n                block.timestamp - s_lastPaymentTimestamp >\\r\\n                s_policy.revivalRule.revivalPeriod + s_policy.gracePeriod //* seconds\\r\\n            ) revert PolicyNotInGracePeriod();\\r\\n\\r\\n            // amount should be close to revivalAmount\\r\\n            if (s_policy.revivalRule.revivalAmount - msg.value > (1 * DECIMALS) / 10000)\\r\\n                revert RevivalAmountNotCorrect();\\r\\n\\r\\n            // set policy to active\\r\\n            s_lastPaymentTimestamp = block.timestamp;\\r\\n            s_policy.isPolicyActive = true;\\r\\n            return;\\r\\n        }\\r\\n\\r\\n        // if premiumToBePaid is close to msg.value then revert\\r\\n        if (s_policy.premiumToBePaid - msg.value > (1 * DECIMALS) / 10000)\\r\\n            revert PremiumAmountNotCorrect();\\r\\n\\r\\n        // set lastTimestamp to current block.timestamp\\r\\n        s_lastPaymentTimestamp = block.timestamp;\\r\\n        s_policy.hasFundedForCurrentMonth = true;\\r\\n    }\\r\\n\\r\\n    function makeClaim() public onlyOwner returns (bool claimed) {\\r\\n        if (!s_policy.isTerminated) revert PolicyTerminated();\\r\\n        if (s_policy.isPolicyActive) revert PolicyNotActive();\\r\\n\\r\\n        // TODO: chainlink API call\\r\\n        if (s_policy.isClaimable) revert PolicyNotClaimable();\\r\\n\\r\\n        // for single claimable policies\\r\\n        if (!s_policy.hasClaimed) revert PolicyAlreadyClaimed();\\r\\n\\r\\n        s_policy.hasClaimed = true;\\r\\n        return true;\\r\\n    }\\r\\n\\r\\n    function revivePolicy() public payable onlyOwner {\\r\\n        if (!s_policy.isTerminated) revert PolicyTerminated();\\r\\n        if (!s_policy.isPolicyActive) revert PolicyActive();\\r\\n        if (s_policy.hasClaimed) revert PolicyAlreadyClaimed();\\r\\n\\r\\n        // if revivalPeriod is over then revert\\r\\n        if (\\r\\n            block.timestamp - s_lastPaymentTimestamp >\\r\\n            s_policy.revivalRule.revivalPeriod + s_policy.gracePeriod //* seconds\\r\\n        ) revert PolicyNotInGracePeriod();\\r\\n\\r\\n        // amount should be close to revivalAmount\\r\\n        if (s_policy.revivalRule.revivalAmount - msg.value < (1 * DECIMALS) / 10000)\\r\\n            revert RevivalAmountNotCorrect();\\r\\n\\r\\n        // set policy to active\\r\\n        s_lastPaymentTimestamp = block.timestamp;\\r\\n        s_policy.isPolicyActive = true;\\r\\n    }\\r\\n}\\r\\n\",\"keccak256\":\"0x4c9708cf0d090c2a26da11aba9171a5b446db1b46e8cf746ba35d9359a5489db\",\"license\":\"MIT\"},\"contracts/SharedData.sol\":{\"content\":\"//SPDX-License-Identifier: MIT\\r\\npragma solidity ^0.8.0;\\r\\n\\r\\n// building a library for shared data\\r\\nlibrary SharedData {\\r\\n  struct HumanDetails {\\r\\n    string name;\\r\\n    string dateOfBirth;\\r\\n    string gender;\\r\\n    string homeAddress;\\r\\n    string phoneNumber;\\r\\n    string pronouns;\\r\\n    string email;\\r\\n    string occupation;\\r\\n    address payable policyHolderWalletAddress;\\r\\n  }\\r\\n  struct RevivalRule {\\r\\n    uint128 revivalPeriod;\\r\\n    uint256 revivalAmount;\\r\\n  }\\r\\n\\r\\n  struct Policy {\\r\\n    HumanDetails policyHolder;\\r\\n    uint128 policyTenure;\\r\\n    uint128 gracePeriod;\\r\\n    uint128 timeBeforeCommencement; // in refer below TODO\\r\\n    uint256 timeInterval; // 2630000 (in months) in seconds TODO: make input in days and convert to seconds in contract by sudip given by debajyoti\\r\\n    uint256 premiumToBePaid;\\r\\n    uint256 totalCoverageByPolicy;\\r\\n    bool hasClaimed;\\r\\n    bool isPolicyActive;\\r\\n    bool isClaimable;\\r\\n    bool isTerminated;\\r\\n    bool hasFundedForCurrentMonth;\\r\\n    RevivalRule revivalRule;\\r\\n    string policyDetails;\\r\\n    PolicyType policyType;\\r\\n    address payable policyManagerContractAddress;\\r\\n  }\\r\\n\\r\\n  enum PolicyType {\\r\\n    Life,\\r\\n    Health\\r\\n  }\\r\\n\\r\\n  struct Nominee {\\r\\n    HumanDetails nomineeDetails;\\r\\n    uint128 nomineeShare;\\r\\n  }\\r\\n\\r\\n  struct LifePolicyParams {\\r\\n    Nominee[] nominees;\\r\\n  }\\r\\n\\r\\n  struct HealthPolicyParams {\\r\\n    uint64 copaymentPercentage;\\r\\n  }\\r\\n}\\r\\n\",\"keccak256\":\"0xc34a72eefe87af62e7a2ea79f496f39a74b97d02e38946aa5bf6a0f5890cf13f\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405260016004553480156200001657600080fd5b5060405162001ef038038062001ef08339810160408190526200003991620005fa565b8051805182916006918290819062000052908262000822565b506020820151600182019062000069908262000822565b506040820151600282019062000080908262000822565b506060820151600382019062000097908262000822565b5060808201516004820190620000ae908262000822565b5060a08201516005820190620000c5908262000822565b5060c08201516006820190620000dc908262000822565b5060e08201516007820190620000f3908262000822565b506101009182015160089190910180546001600160a01b0319166001600160a01b0390921691909117905560208381015160408501516001600160801b03918216600160801b918316919091021760098501556060850151600a850180546001600160801b03199081169284169290921790556080860151600b86015560a0860151600c86015560c0860151600d86015560e0860151600e86018054888701516101208a01516101408b01516101608c015161ffff1990941695151561ff001916959095179115159098021763ffff00001916620100009715159790970263ff0000001916969096176301000000921515929092029190911760ff60201b191664010000000095151595909502949094179093556101808501518051600f86018054909516921691909117909255015160108201556101a082015160118201906200023f908262000822565b506101c082015160128201805460ff191660018381811115620002665762000266620008ee565b02179055506101e09190910151601290910180546001600160a01b0390921661010002610100600160a81b03199092169190911790555062000904565b634e487b7160e01b600052604160045260246000fd5b60405161012081016001600160401b0381118282101715620002df57620002df620002a3565b60405290565b60405161020081016001600160401b0381118282101715620002df57620002df620002a3565b604051601f8201601f191681016001600160401b0381118282101715620003365762000336620002a3565b604052919050565b600082601f8301126200035057600080fd5b81516001600160401b038111156200036c576200036c620002a3565b602062000382601f8301601f191682016200030b565b82815285828487010111156200039757600080fd5b60005b83811015620003b75785810183015182820184015282016200039a565b506000928101909101919091529392505050565b80516001600160a01b0381168114620003e357600080fd5b919050565b60006101208284031215620003fc57600080fd5b62000406620002b9565b82519091506001600160401b03808211156200042157600080fd5b6200042f858386016200033e565b835260208401519150808211156200044657600080fd5b62000454858386016200033e565b602084015260408401519150808211156200046e57600080fd5b6200047c858386016200033e565b604084015260608401519150808211156200049657600080fd5b620004a4858386016200033e565b60608401526080840151915080821115620004be57600080fd5b620004cc858386016200033e565b608084015260a0840151915080821115620004e657600080fd5b620004f4858386016200033e565b60a084015260c08401519150808211156200050e57600080fd5b6200051c858386016200033e565b60c084015260e08401519150808211156200053657600080fd5b5062000545848285016200033e565b60e0830152506101006200055b818401620003cb565b9082015292915050565b80516001600160801b0381168114620003e357600080fd5b80518015158114620003e357600080fd5b600060408284031215620005a157600080fd5b604080519081016001600160401b0381118282101715620005c657620005c6620002a3565b604052905080620005d78362000565565b8152602083015160208201525092915050565b805160028110620003e357600080fd5b6000602082840312156200060d57600080fd5b81516001600160401b03808211156200062557600080fd5b9083019061022082860312156200063b57600080fd5b62000645620002e5565b8251828111156200065557600080fd5b6200066387828601620003e8565b825250620006746020840162000565565b6020820152620006876040840162000565565b60408201526200069a6060840162000565565b60608201526080830151608082015260a083015160a082015260c083015160c0820152620006cb60e084016200057d565b60e0820152610100620006e08185016200057d565b90820152610120620006f48482016200057d565b90820152610140620007088482016200057d565b908201526101606200071c8482016200057d565b9082015261018062000731878583016200058e565b908201526101c083810151838111156200074a57600080fd5b62000758888287016200033e565b6101a0840152506101e0925062000771838501620005ea565b90820152620007846102008401620003cb565b91810191909152949350505050565b600181811c90821680620007a857607f821691505b602082108103620007c957634e487b7160e01b600052602260045260246000fd5b50919050565b601f8211156200081d57600081815260208120601f850160051c81016020861015620007f85750805b601f850160051c820191505b81811015620008195782815560010162000804565b5050505b505050565b81516001600160401b038111156200083e576200083e620002a3565b62000856816200084f845462000793565b84620007cf565b602080601f8311600181146200088e5760008415620008755750858301515b600019600386901b1c1916600185901b17855562000819565b600085815260208120601f198616915b82811015620008bf578886015182559484019460019091019084016200089e565b5085821015620008de5787850151600019600388901b60f8161c191681555b5050505050600190811b01905550565b634e487b7160e01b600052602160045260246000fd5b6115dc80620009146000396000f3fe6080604052600436106101835760003560e01c806362ba912a116100d6578063a60496501161007f578063dbd1838811610059578063dbd18388146105bd578063ec21858f146105e2578063f5aa02001461060a57600080fd5b8063a604965014610565578063b0141ed414610583578063cc9ba6fa1461059b57600080fd5b80639471ca5c116100b05780639471ca5c146104d25780639507b878146104f257806395dcc90a1461051157600080fd5b806362ba912a1461047e5780636e04ff0d1461048657806372ef3151146104b457600080fd5b80632b140f4f116101385780634585e33b116101125780634585e33b1461041e5780634f7d38291461043e57806352e9c64c1461045e57600080fd5b80632b140f4f146103b5578063378c93ad146103d55780633db96d5f146103f557600080fd5b806312704a421161016957806312704a421461034c5780631c0bab141461037e578063248f0f97146103a057600080fd5b806285ce021461030257806301b01c861461032d57600080fd5b366102fd576014546301000000900460ff166101b25760405163c60d361f60e01b815260040160405180910390fd5b601454610100900460ff1661027c57600f546015546101e4916001600160801b03600160801b9091048116911661129f565b6001600160801b0316601954426101fb91906112c6565b111561021a57604051631932f4cb60e21b815260040160405180910390fd5b612710610230670de0b6b3a764000060016112df565b61023a91906112f6565b6016546102489034906112c6565b111561026757604051631b44afc760e31b815260040160405180910390fd5b426019556014805461ff001916610100179055005b612710610292670de0b6b3a764000060016112df565b61029c91906112f6565b6012546102aa9034906112c6565b11156102e2576040517f7684b8c400000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b426019556014805464ff000000001916640100000000179055005b600080fd5b34801561030e57600080fd5b5061031761061f565b604051610324919061135e565b60405180910390f35b34801561033957600080fd5b506012545b604051908152602001610324565b34801561035857600080fd5b506010546001600160801b03165b6040516001600160801b039091168152602001610324565b34801561038a57600080fd5b5061039e610399366004611473565b610b2e565b005b3480156103ac57600080fd5b5060135461033e565b3480156103c157600080fd5b5060185460ff16604051610324919061149c565b3480156103e157600080fd5b5061039e6103f0366004611473565b610b9f565b34801561040157600080fd5b50601454610100900460ff165b6040519015158152602001610324565b34801561042a57600080fd5b5061039e6104393660046114c4565b610c0e565b34801561044a57600080fd5b5061039e610459366004611473565b610ca8565b34801561046a57600080fd5b5061039e610479366004611473565b610d0e565b61039e610d7b565b34801561049257600080fd5b506104a66104a13660046114c4565b610f18565b604051610324929190611536565b3480156104c057600080fd5b50600f546001600160801b0316610366565b3480156104de57600080fd5b5061039e6104ed366004611473565b611045565b3480156104fe57600080fd5b506014546301000000900460ff1661040e565b34801561051d57600080fd5b506040805180820182526000808252602091820152815180830183526015546001600160801b0316808252601654918301918252835190815290519181019190915201610324565b34801561057157600080fd5b5060145462010000900460ff1661040e565b34801561058f57600080fd5b5060145460ff1661040e565b3480156105a757600080fd5b506105b06110b8565b6040516103249190611559565b3480156105c957600080fd5b50600f54600160801b90046001600160801b0316610366565b3480156105ee57600080fd5b50600e546040516001600160a01b039091168152602001610324565b34801561061657600080fd5b5061040e61114d565b610677604051806101200160405280606081526020016060815260200160608152602001606081526020016060815260200160608152602001606081526020016060815260200160006001600160a01b031681525090565b60408051610120810190915260068054829082906106949061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546106c09061156c565b801561070d5780601f106106e25761010080835404028352916020019161070d565b820191906000526020600020905b8154815290600101906020018083116106f057829003601f168201915b505050505081526020016001820180546107269061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546107529061156c565b801561079f5780601f106107745761010080835404028352916020019161079f565b820191906000526020600020905b81548152906001019060200180831161078257829003601f168201915b505050505081526020016002820180546107b89061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546107e49061156c565b80156108315780601f1061080657610100808354040283529160200191610831565b820191906000526020600020905b81548152906001019060200180831161081457829003601f168201915b5050505050815260200160038201805461084a9061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546108769061156c565b80156108c35780601f10610898576101008083540402835291602001916108c3565b820191906000526020600020905b8154815290600101906020018083116108a657829003601f168201915b505050505081526020016004820180546108dc9061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546109089061156c565b80156109555780601f1061092a57610100808354040283529160200191610955565b820191906000526020600020905b81548152906001019060200180831161093857829003601f168201915b5050505050815260200160058201805461096e9061156c565b80601f016020809104026020016040519081016040528092919081815260200182805461099a9061156c565b80156109e75780601f106109bc576101008083540402835291602001916109e7565b820191906000526020600020905b8154815290600101906020018083116109ca57829003601f168201915b50505050508152602001600682018054610a009061156c565b80601f0160208091040260200160405190810160405280929190818152602001828054610a2c9061156c565b8015610a795780601f10610a4e57610100808354040283529160200191610a79565b820191906000526020600020905b815481529060010190602001808311610a5c57829003601f168201915b50505050508152602001600782018054610a929061156c565b80601f0160208091040260200160405190810160405280929190818152602001828054610abe9061156c565b8015610b0b5780601f10610ae057610100808354040283529160200191610b0b565b820191906000526020600020905b815481529060010190602001808311610aee57829003601f168201915b5050509183525050600891909101546001600160a01b0316602090910152919050565b600e546001600160a01b031633141580610b58575060185461010090046001600160a01b03163314155b80610b635750333014155b15610b8157604051630e2f7eff60e31b815260040160405180910390fd5b6014805491151563010000000263ff00000019909216919091179055565b600e546001600160a01b031633141580610bc9575060185461010090046001600160a01b03163314155b80610bd45750333014155b15610bf257604051630e2f7eff60e31b815260040160405180910390fd5b60148054911515620100000262ff000019909216919091179055565b6014805464ff0000000019169055600f54601954600160801b9091046001600160801b031690610c3e90426112c6565b1115610c50576014805461ff00191690555b601554600f54610c73916001600160801b0390811691600160801b90041661129f565b6001600160801b031660195442610c8a91906112c6565b1115610ca4576014805463ff000000191663010000001790555b5050565b600e546001600160a01b031633141580610cd2575060185461010090046001600160a01b03163314155b80610cdd5750333014155b15610cfb57604051630e2f7eff60e31b815260040160405180910390fd5b6014805460ff1916911515919091179055565b600e546001600160a01b031633141580610d38575060185461010090046001600160a01b03163314155b80610d435750333014155b15610d6157604051630e2f7eff60e31b815260040160405180910390fd5b601480549115156101000261ff0019909216919091179055565b600e546001600160a01b031633141580610da5575060185461010090046001600160a01b03163314155b80610db05750333014155b15610dce57604051630e2f7eff60e31b815260040160405180910390fd5b6014546301000000900460ff16610df85760405163c60d361f60e01b815260040160405180910390fd5b601454610100900460ff16610e39576040517f8d8d689b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60145460ff1615610e5d57604051631a4c0efb60e21b815260040160405180910390fd5b600f54601554610e80916001600160801b03600160801b9091048116911661129f565b6001600160801b031660195442610e9791906112c6565b1115610eb657604051631932f4cb60e21b815260040160405180910390fd5b612710610ecc670de0b6b3a764000060016112df565b610ed691906112f6565b601654610ee49034906112c6565b1015610f0357604051631b44afc760e31b815260040160405180910390fd5b426019556014805461ff001916610100179055565b6014546000906060906301000000900460ff1615610f6a57505060408051808201909152601481527f506f6c696379206973207465726d696e6174656400000000000000000000000060208201526000905b601454610100900460ff16610ff357601554600f54610f9c916001600160801b0390811691600160801b90041661129f565b6001600160801b031660195442610fb391906112c6565b1115610ff357505060408051808201909152601681527f5265766976616c20706572696f64206973206f7665720000000000000000000060208201526000905b60115460195461100390426112c6565b1191506040518060400160405280601081526020017f55706b656570206973206e65656465640000000000000000000000000000000081525090509250929050565b600e546001600160a01b03163314158061106f575060185461010090046001600160a01b03163314155b8061107a5750333014155b1561109857604051630e2f7eff60e31b815260040160405180910390fd5b601480549115156401000000000264ff0000000019909216919091179055565b6060600660110180546110ca9061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546110f69061156c565b80156111435780601f1061111857610100808354040283529160200191611143565b820191906000526020600020905b81548152906001019060200180831161112657829003601f168201915b5050505050905090565b600e546000906001600160a01b03163314158061117a575060185461010090046001600160a01b03163314155b806111855750333014155b156111a357604051630e2f7eff60e31b815260040160405180910390fd5b6014546301000000900460ff166111cd5760405163c60d361f60e01b815260040160405180910390fd5b601454610100900460ff161561120f576040517f8966b51f00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60145462010000900460ff1615611252576040517fc117907200000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60145460ff1661127557604051631a4c0efb60e21b815260040160405180910390fd5b506014805460ff1916600190811790915590565b634e487b7160e01b600052601160045260246000fd5b6001600160801b038181168382160190808211156112bf576112bf611289565b5092915050565b818103818111156112d9576112d9611289565b92915050565b80820281158282048414176112d9576112d9611289565b60008261131357634e487b7160e01b600052601260045260246000fd5b500490565b6000815180845260005b8181101561133e57602081850181015186830182015201611322565b506000602082860101526020601f19601f83011685010191505092915050565b602081526000825161012080602085015261137d610140850183611318565b91506020850151601f198086850301604087015261139b8483611318565b935060408701519150808685030160608701526113b88483611318565b935060608701519150808685030160808701526113d58483611318565b935060808701519150808685030160a08701526113f28483611318565b935060a08701519150808685030160c087015261140f8483611318565b935060c08701519150808685030160e087015261142c8483611318565b935060e0870151915061010081878603018188015261144b8584611318565b94508088015192505050611469828601826001600160a01b03169052565b5090949350505050565b60006020828403121561148557600080fd5b8135801515811461149557600080fd5b9392505050565b60208101600283106114be57634e487b7160e01b600052602160045260246000fd5b91905290565b600080602083850312156114d757600080fd5b823567ffffffffffffffff808211156114ef57600080fd5b818501915085601f83011261150357600080fd5b81358181111561151257600080fd5b86602082850101111561152457600080fd5b60209290920196919550909350505050565b82151581526040602082015260006115516040830184611318565b949350505050565b6020815260006114956020830184611318565b600181811c9082168061158057607f821691505b6020821081036115a057634e487b7160e01b600052602260045260246000fd5b5091905056fea26469706673582212201a2fe308c2aa89c96fe095e9ec6311aa6c79c60992876a7da1cc1de64b1599b964736f6c63430008120033",
+  "deployedBytecode": "0x6080604052600436106101835760003560e01c806362ba912a116100d6578063a60496501161007f578063dbd1838811610059578063dbd18388146105bd578063ec21858f146105e2578063f5aa02001461060a57600080fd5b8063a604965014610565578063b0141ed414610583578063cc9ba6fa1461059b57600080fd5b80639471ca5c116100b05780639471ca5c146104d25780639507b878146104f257806395dcc90a1461051157600080fd5b806362ba912a1461047e5780636e04ff0d1461048657806372ef3151146104b457600080fd5b80632b140f4f116101385780634585e33b116101125780634585e33b1461041e5780634f7d38291461043e57806352e9c64c1461045e57600080fd5b80632b140f4f146103b5578063378c93ad146103d55780633db96d5f146103f557600080fd5b806312704a421161016957806312704a421461034c5780631c0bab141461037e578063248f0f97146103a057600080fd5b806285ce021461030257806301b01c861461032d57600080fd5b366102fd576014546301000000900460ff166101b25760405163c60d361f60e01b815260040160405180910390fd5b601454610100900460ff1661027c57600f546015546101e4916001600160801b03600160801b9091048116911661129f565b6001600160801b0316601954426101fb91906112c6565b111561021a57604051631932f4cb60e21b815260040160405180910390fd5b612710610230670de0b6b3a764000060016112df565b61023a91906112f6565b6016546102489034906112c6565b111561026757604051631b44afc760e31b815260040160405180910390fd5b426019556014805461ff001916610100179055005b612710610292670de0b6b3a764000060016112df565b61029c91906112f6565b6012546102aa9034906112c6565b11156102e2576040517f7684b8c400000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b426019556014805464ff000000001916640100000000179055005b600080fd5b34801561030e57600080fd5b5061031761061f565b604051610324919061135e565b60405180910390f35b34801561033957600080fd5b506012545b604051908152602001610324565b34801561035857600080fd5b506010546001600160801b03165b6040516001600160801b039091168152602001610324565b34801561038a57600080fd5b5061039e610399366004611473565b610b2e565b005b3480156103ac57600080fd5b5060135461033e565b3480156103c157600080fd5b5060185460ff16604051610324919061149c565b3480156103e157600080fd5b5061039e6103f0366004611473565b610b9f565b34801561040157600080fd5b50601454610100900460ff165b6040519015158152602001610324565b34801561042a57600080fd5b5061039e6104393660046114c4565b610c0e565b34801561044a57600080fd5b5061039e610459366004611473565b610ca8565b34801561046a57600080fd5b5061039e610479366004611473565b610d0e565b61039e610d7b565b34801561049257600080fd5b506104a66104a13660046114c4565b610f18565b604051610324929190611536565b3480156104c057600080fd5b50600f546001600160801b0316610366565b3480156104de57600080fd5b5061039e6104ed366004611473565b611045565b3480156104fe57600080fd5b506014546301000000900460ff1661040e565b34801561051d57600080fd5b506040805180820182526000808252602091820152815180830183526015546001600160801b0316808252601654918301918252835190815290519181019190915201610324565b34801561057157600080fd5b5060145462010000900460ff1661040e565b34801561058f57600080fd5b5060145460ff1661040e565b3480156105a757600080fd5b506105b06110b8565b6040516103249190611559565b3480156105c957600080fd5b50600f54600160801b90046001600160801b0316610366565b3480156105ee57600080fd5b50600e546040516001600160a01b039091168152602001610324565b34801561061657600080fd5b5061040e61114d565b610677604051806101200160405280606081526020016060815260200160608152602001606081526020016060815260200160608152602001606081526020016060815260200160006001600160a01b031681525090565b60408051610120810190915260068054829082906106949061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546106c09061156c565b801561070d5780601f106106e25761010080835404028352916020019161070d565b820191906000526020600020905b8154815290600101906020018083116106f057829003601f168201915b505050505081526020016001820180546107269061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546107529061156c565b801561079f5780601f106107745761010080835404028352916020019161079f565b820191906000526020600020905b81548152906001019060200180831161078257829003601f168201915b505050505081526020016002820180546107b89061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546107e49061156c565b80156108315780601f1061080657610100808354040283529160200191610831565b820191906000526020600020905b81548152906001019060200180831161081457829003601f168201915b5050505050815260200160038201805461084a9061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546108769061156c565b80156108c35780601f10610898576101008083540402835291602001916108c3565b820191906000526020600020905b8154815290600101906020018083116108a657829003601f168201915b505050505081526020016004820180546108dc9061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546109089061156c565b80156109555780601f1061092a57610100808354040283529160200191610955565b820191906000526020600020905b81548152906001019060200180831161093857829003601f168201915b5050505050815260200160058201805461096e9061156c565b80601f016020809104026020016040519081016040528092919081815260200182805461099a9061156c565b80156109e75780601f106109bc576101008083540402835291602001916109e7565b820191906000526020600020905b8154815290600101906020018083116109ca57829003601f168201915b50505050508152602001600682018054610a009061156c565b80601f0160208091040260200160405190810160405280929190818152602001828054610a2c9061156c565b8015610a795780601f10610a4e57610100808354040283529160200191610a79565b820191906000526020600020905b815481529060010190602001808311610a5c57829003601f168201915b50505050508152602001600782018054610a929061156c565b80601f0160208091040260200160405190810160405280929190818152602001828054610abe9061156c565b8015610b0b5780601f10610ae057610100808354040283529160200191610b0b565b820191906000526020600020905b815481529060010190602001808311610aee57829003601f168201915b5050509183525050600891909101546001600160a01b0316602090910152919050565b600e546001600160a01b031633141580610b58575060185461010090046001600160a01b03163314155b80610b635750333014155b15610b8157604051630e2f7eff60e31b815260040160405180910390fd5b6014805491151563010000000263ff00000019909216919091179055565b600e546001600160a01b031633141580610bc9575060185461010090046001600160a01b03163314155b80610bd45750333014155b15610bf257604051630e2f7eff60e31b815260040160405180910390fd5b60148054911515620100000262ff000019909216919091179055565b6014805464ff0000000019169055600f54601954600160801b9091046001600160801b031690610c3e90426112c6565b1115610c50576014805461ff00191690555b601554600f54610c73916001600160801b0390811691600160801b90041661129f565b6001600160801b031660195442610c8a91906112c6565b1115610ca4576014805463ff000000191663010000001790555b5050565b600e546001600160a01b031633141580610cd2575060185461010090046001600160a01b03163314155b80610cdd5750333014155b15610cfb57604051630e2f7eff60e31b815260040160405180910390fd5b6014805460ff1916911515919091179055565b600e546001600160a01b031633141580610d38575060185461010090046001600160a01b03163314155b80610d435750333014155b15610d6157604051630e2f7eff60e31b815260040160405180910390fd5b601480549115156101000261ff0019909216919091179055565b600e546001600160a01b031633141580610da5575060185461010090046001600160a01b03163314155b80610db05750333014155b15610dce57604051630e2f7eff60e31b815260040160405180910390fd5b6014546301000000900460ff16610df85760405163c60d361f60e01b815260040160405180910390fd5b601454610100900460ff16610e39576040517f8d8d689b00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60145460ff1615610e5d57604051631a4c0efb60e21b815260040160405180910390fd5b600f54601554610e80916001600160801b03600160801b9091048116911661129f565b6001600160801b031660195442610e9791906112c6565b1115610eb657604051631932f4cb60e21b815260040160405180910390fd5b612710610ecc670de0b6b3a764000060016112df565b610ed691906112f6565b601654610ee49034906112c6565b1015610f0357604051631b44afc760e31b815260040160405180910390fd5b426019556014805461ff001916610100179055565b6014546000906060906301000000900460ff1615610f6a57505060408051808201909152601481527f506f6c696379206973207465726d696e6174656400000000000000000000000060208201526000905b601454610100900460ff16610ff357601554600f54610f9c916001600160801b0390811691600160801b90041661129f565b6001600160801b031660195442610fb391906112c6565b1115610ff357505060408051808201909152601681527f5265766976616c20706572696f64206973206f7665720000000000000000000060208201526000905b60115460195461100390426112c6565b1191506040518060400160405280601081526020017f55706b656570206973206e65656465640000000000000000000000000000000081525090509250929050565b600e546001600160a01b03163314158061106f575060185461010090046001600160a01b03163314155b8061107a5750333014155b1561109857604051630e2f7eff60e31b815260040160405180910390fd5b601480549115156401000000000264ff0000000019909216919091179055565b6060600660110180546110ca9061156c565b80601f01602080910402602001604051908101604052809291908181526020018280546110f69061156c565b80156111435780601f1061111857610100808354040283529160200191611143565b820191906000526020600020905b81548152906001019060200180831161112657829003601f168201915b5050505050905090565b600e546000906001600160a01b03163314158061117a575060185461010090046001600160a01b03163314155b806111855750333014155b156111a357604051630e2f7eff60e31b815260040160405180910390fd5b6014546301000000900460ff166111cd5760405163c60d361f60e01b815260040160405180910390fd5b601454610100900460ff161561120f576040517f8966b51f00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60145462010000900460ff1615611252576040517fc117907200000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b60145460ff1661127557604051631a4c0efb60e21b815260040160405180910390fd5b506014805460ff1916600190811790915590565b634e487b7160e01b600052601160045260246000fd5b6001600160801b038181168382160190808211156112bf576112bf611289565b5092915050565b818103818111156112d9576112d9611289565b92915050565b80820281158282048414176112d9576112d9611289565b60008261131357634e487b7160e01b600052601260045260246000fd5b500490565b6000815180845260005b8181101561133e57602081850181015186830182015201611322565b506000602082860101526020601f19601f83011685010191505092915050565b602081526000825161012080602085015261137d610140850183611318565b91506020850151601f198086850301604087015261139b8483611318565b935060408701519150808685030160608701526113b88483611318565b935060608701519150808685030160808701526113d58483611318565b935060808701519150808685030160a08701526113f28483611318565b935060a08701519150808685030160c087015261140f8483611318565b935060c08701519150808685030160e087015261142c8483611318565b935060e0870151915061010081878603018188015261144b8584611318565b94508088015192505050611469828601826001600160a01b03169052565b5090949350505050565b60006020828403121561148557600080fd5b8135801515811461149557600080fd5b9392505050565b60208101600283106114be57634e487b7160e01b600052602160045260246000fd5b91905290565b600080602083850312156114d757600080fd5b823567ffffffffffffffff808211156114ef57600080fd5b818501915085601f83011261150357600080fd5b81358181111561151257600080fd5b86602082850101111561152457600080fd5b60209290920196919550909350505050565b82151581526040602082015260006115516040830184611318565b949350505050565b6020815260006114956020830184611318565b600181811c9082168061158057607f821691505b6020821081036115a057634e487b7160e01b600052602260045260246000fd5b5091905056fea26469706673582212201a2fe308c2aa89c96fe095e9ec6311aa6c79c60992876a7da1cc1de64b1599b964736f6c63430008120033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "checkUpkeep(bytes)": {
+        "details": "To ensure that it is never called, you may want to add the cannotExecute modifier from KeeperBase to your implementation of this method.",
+        "params": {
+          "checkData": "specified in the upkeep registration so it is always the same for a registered upkeep. This can easily be broken down into specific arguments using `abi.decode`, so multiple upkeeps can be registered on the same contract and easily differentiated by the contract."
+        },
+        "returns": {
+          "performData": "bytes that the keeper should call performUpkeep with, if upkeep is needed. If you would like to encode data to decode later, try `abi.encode`.",
+          "upkeepNeeded": "boolean to indicate whether the keeper should call performUpkeep or not."
+        }
+      },
+      "performUpkeep(bytes)": {
+        "details": "The input to this method should not be trusted, and the caller of the method should not even be restricted to any single registry. Anyone should be able call it, and the input should be validated, there is no guarantee that the data passed in is the performData returned from checkUpkeep. This could happen due to malicious keepers, racing keepers, or simply a state change while the performUpkeep transaction is waiting for confirmation. Always validate the data passed in.",
+        "params": {
+          "performData": "is the data which was passed back from the checkData simulation. If it is encoded, it can easily be decoded into other types by calling `abi.decode`. This data should not be trusted, and should be validated against the contract's current state."
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "checkUpkeep(bytes)": {
+        "notice": "method that is simulated by the keepers to see if any work actually needs to be performed. This method does does not actually need to be executable, and since it is only ever simulated it can consume lots of gas."
+      },
+      "performUpkeep(bytes)": {
+        "notice": "method that is actually executed by the keepers, via the registry. The data returned by the checkUpkeep simulation will be passed into this method to actually be executed."
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 358,
+        "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+        "label": "s_ens",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_contract(ENSInterface)1193"
+      },
+      {
+        "astId": 360,
+        "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+        "label": "s_ensNode",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_bytes32"
+      },
+      {
+        "astId": 363,
+        "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+        "label": "s_link",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_contract(LinkTokenInterface)1288"
+      },
+      {
+        "astId": 366,
+        "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+        "label": "s_oracle",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_contract(OperatorInterface)1368"
+      },
+      {
+        "astId": 369,
+        "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+        "label": "s_requestCount",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 373,
+        "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+        "label": "s_pendingRequests",
+        "offset": 0,
+        "slot": "5",
+        "type": "t_mapping(t_bytes32,t_address)"
+      },
+      {
+        "astId": 3571,
+        "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+        "label": "s_policy",
+        "offset": 0,
+        "slot": "6",
+        "type": "t_struct(Policy)4619_storage"
+      },
+      {
+        "astId": 3573,
+        "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+        "label": "s_lastPaymentTimestamp",
+        "offset": 0,
+        "slot": "25",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 3575,
+        "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+        "label": "s_startTimestamp",
+        "offset": 0,
+        "slot": "26",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_address_payable": {
+        "encoding": "inplace",
+        "label": "address payable",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(ENSInterface)1193": {
+        "encoding": "inplace",
+        "label": "contract ENSInterface",
+        "numberOfBytes": "20"
+      },
+      "t_contract(LinkTokenInterface)1288": {
+        "encoding": "inplace",
+        "label": "contract LinkTokenInterface",
+        "numberOfBytes": "20"
+      },
+      "t_contract(OperatorInterface)1368": {
+        "encoding": "inplace",
+        "label": "contract OperatorInterface",
+        "numberOfBytes": "20"
+      },
+      "t_enum(PolicyType)4622": {
+        "encoding": "inplace",
+        "label": "enum SharedData.PolicyType",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_bytes32,t_address)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => address)",
+        "numberOfBytes": "32",
+        "value": "t_address"
+      },
+      "t_string_storage": {
+        "encoding": "bytes",
+        "label": "string",
+        "numberOfBytes": "32"
+      },
+      "t_struct(HumanDetails)4578_storage": {
+        "encoding": "inplace",
+        "label": "struct SharedData.HumanDetails",
+        "members": [
+          {
+            "astId": 4561,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "name",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4563,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "dateOfBirth",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4565,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "gender",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4567,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "homeAddress",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4569,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "phoneNumber",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4571,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "pronouns",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4573,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "email",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4575,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "occupation",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4577,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "policyHolderWalletAddress",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_address_payable"
+          }
+        ],
+        "numberOfBytes": "288"
+      },
+      "t_struct(Policy)4619_storage": {
+        "encoding": "inplace",
+        "label": "struct SharedData.Policy",
+        "members": [
+          {
+            "astId": 4586,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "policyHolder",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_struct(HumanDetails)4578_storage"
+          },
+          {
+            "astId": 4588,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "policyTenure",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_uint128"
+          },
+          {
+            "astId": 4590,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "gracePeriod",
+            "offset": 16,
+            "slot": "9",
+            "type": "t_uint128"
+          },
+          {
+            "astId": 4592,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "timeBeforeCommencement",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_uint128"
+          },
+          {
+            "astId": 4594,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "timeInterval",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 4596,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "premiumToBePaid",
+            "offset": 0,
+            "slot": "12",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 4598,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "totalCoverageByPolicy",
+            "offset": 0,
+            "slot": "13",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 4600,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "hasClaimed",
+            "offset": 0,
+            "slot": "14",
+            "type": "t_bool"
+          },
+          {
+            "astId": 4602,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "isPolicyActive",
+            "offset": 1,
+            "slot": "14",
+            "type": "t_bool"
+          },
+          {
+            "astId": 4604,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "isClaimable",
+            "offset": 2,
+            "slot": "14",
+            "type": "t_bool"
+          },
+          {
+            "astId": 4606,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "isTerminated",
+            "offset": 3,
+            "slot": "14",
+            "type": "t_bool"
+          },
+          {
+            "astId": 4608,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "hasFundedForCurrentMonth",
+            "offset": 4,
+            "slot": "14",
+            "type": "t_bool"
+          },
+          {
+            "astId": 4611,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "revivalRule",
+            "offset": 0,
+            "slot": "15",
+            "type": "t_struct(RevivalRule)4583_storage"
+          },
+          {
+            "astId": 4613,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "policyDetails",
+            "offset": 0,
+            "slot": "17",
+            "type": "t_string_storage"
+          },
+          {
+            "astId": 4616,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "policyType",
+            "offset": 0,
+            "slot": "18",
+            "type": "t_enum(PolicyType)4622"
+          },
+          {
+            "astId": 4618,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "policyManagerContractAddress",
+            "offset": 1,
+            "slot": "18",
+            "type": "t_address_payable"
+          }
+        ],
+        "numberOfBytes": "608"
+      },
+      "t_struct(RevivalRule)4583_storage": {
+        "encoding": "inplace",
+        "label": "struct SharedData.RevivalRule",
+        "members": [
+          {
+            "astId": 4580,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "revivalPeriod",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint128"
+          },
+          {
+            "astId": 4582,
+            "contract": "contracts/BaseInsurancePolicy.sol:BaseInsurancePolicy",
+            "label": "revivalAmount",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint128": {
+        "encoding": "inplace",
+        "label": "uint128",
+        "numberOfBytes": "16"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
