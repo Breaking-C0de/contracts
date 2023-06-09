@@ -10,7 +10,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     uint256 private s_lastPaymentTimestamp;
     uint256 private s_startTimestamp;
 
-    error OnlyOwnerAllowed();
+    error OnlyAdminAllowed();
     error PolicyNotActive();
     error PolicyTerminated();
     error PolicyNotClaimable();
@@ -22,14 +22,17 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     error RevivalAmountNotCorrect();
     error PremiumAmountNotCorrect();
     error PolicyActive();
-    modifier onlyOwner() {
-        if (
-            msg.sender != s_policy.policyHolder.policyHolderWalletAddress ||
-            msg.sender != s_policy.policyManagerContractAddress ||
-            msg.sender != address(this)
-        ) {
-            revert OnlyOwnerAllowed();
+    modifier onlyAdmin() {
+        bool allowed= false;
+        for (uint8 i=0;i<admins.length;i++)
+        {
+        if (msg.sender == admins[i]) {
+            allowed =true;
+            break;
         }
+        }
+        if(!allowed)
+        revert OnlyAdminAllowed();
         _;
     }
     modifier isNotTerminated() {
@@ -40,30 +43,39 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     }
     // constant decimals
     uint256 private constant DECIMALS = 10 ** 18;
-
-    constructor(SharedData.Policy memory policy) {
+    address[] public admins;
+    //This array will store all those addresses which will be allowed to call certain restricted functions
+    constructor(SharedData.Policy memory policy, address[] memory _admins) {
         s_policy = policy;
+        for (uint8 i=0; i< _admins.length; i++)
+        {
+            admins.push(_admins[i]);
+        }
+        admins.push(s_policy.policyHolder.policyHolderWalletAddress);
+        admins.push(address(this));
     }
 
     // Setter functions
 
-    function setTermination(bool isTerminate) public onlyOwner {
+
+
+    function setTermination(bool isTerminate) public onlyAdmin {
         s_policy.isTerminated = isTerminate;
     }
 
-    function setClaimable(bool isClaimable) public onlyOwner {
+    function setClaimable(bool isClaimable) public onlyAdmin {
         s_policy.isClaimable = isClaimable;
     }
 
-    function setClaimed(bool hasClaimed) public onlyOwner {
+    function setClaimed(bool hasClaimed) public onlyAdmin {
         s_policy.hasClaimed = hasClaimed;
     }
 
-    function setPolicyActive(bool isPolicyActive) public onlyOwner {
+    function setPolicyActive(bool isPolicyActive) public onlyAdmin {
         s_policy.isPolicyActive = isPolicyActive;
     }
 
-    function setHasFundedForCurrentMonth(bool hasFundedForCurrentMonth) public onlyOwner {
+    function setHasFundedForCurrentMonth(bool hasFundedForCurrentMonth) public onlyAdmin {
         s_policy.hasFundedForCurrentMonth = hasFundedForCurrentMonth;
     }
 
@@ -205,7 +217,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         s_policy.hasFundedForCurrentMonth = true;
     }
 
-    function makeClaim() public onlyOwner returns (bool claimed) {
+    function makeClaim() public onlyAdmin returns (bool claimed) {
         if (!s_policy.isTerminated) revert PolicyTerminated();
         if (s_policy.isPolicyActive) revert PolicyNotActive();
 
@@ -219,7 +231,7 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         return true;
     }
 
-    function revivePolicy() public payable onlyOwner {
+    function revivePolicy() public payable onlyAdmin {
         if (!s_policy.isTerminated) revert PolicyTerminated();
         if (!s_policy.isPolicyActive) revert PolicyActive();
         if (s_policy.hasClaimed) revert PolicyAlreadyClaimed();
@@ -239,9 +251,15 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         s_policy.isPolicyActive = true;
     }
 
-    function terminatePolicy() public onlyOwner {
+    function terminatePolicy() public onlyAdmin {
         if (s_policy.isTerminated) revert PolicyTerminated();
         s_policy.isTerminated = true;
         s_policy.policyManagerContractAddress.transfer(address(this).balance);
     }
+    function withdraw() public payable onlyAdmin isNotTerminated {
+
+        uint256 withdrawableAmount = s_policy.totalCoverageByPolicy;
+        s_policy.policyHolder.policyHolderWalletAddress.transfer(withdrawableAmount);
+        setTermination(true);
+        }
 }
