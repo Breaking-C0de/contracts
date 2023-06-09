@@ -25,7 +25,7 @@ const { developmentChains } = require("../helper-hardhat-config")
               const oldBalance2 = await ethers.provider.getBalance(
                   s_lifePolicyParams.nominees[1].nomineeDetails.policyHolderWalletAddress
               )
-              const tx1= await LifeInsurancePolicyContract.connect(nominee1).withdraw()
+              const tx1 = await LifeInsurancePolicyContract.connect(nominee1).withdraw()
               const tx = LifeInsurancePolicyContract.connect(nominee1).withdraw()
               await expect(tx).to.be.revertedWith("PolicyNomineeNotFound") // Replace 'Error message' with the expected error message or leave it empty for any revert error
               const txReciept = await tx.wait(1)
