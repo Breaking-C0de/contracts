@@ -9,20 +9,16 @@ import "./BaseInsurancePolicy.sol";
  */
 
 contract LifeInsurancePolicy is BaseInsurancePolicy {
-  error WithdrawingError();
-  error PolicyNomineeNotFound();
+    error WithdrawingError();
+    error PolicyNomineeNotFound();
     SharedData.LifePolicyParams private s_lifePolicyParams;
 
     constructor(
         SharedData.Policy memory policy,
         SharedData.LifePolicyParams memory lifePolicyParams,
-        address[] memory admins,
         address _link,
-        address _oracle,
-        bytes32 _jobId,
         address priceFeed
-
-    ) BaseInsurancePolicy(policy,admins,_link,_oracle,_jobId,priceFeed) {
+    ) BaseInsurancePolicy(policy, _link, priceFeed) {
         // Loop over the nominees array and push it to storage
         for (uint256 i = 0; i < lifePolicyParams.nominees.length; i++) {
             s_lifePolicyParams.nominees.push(lifePolicyParams.nominees[i]);
@@ -37,26 +33,34 @@ contract LifeInsurancePolicy is BaseInsurancePolicy {
         return s_lifePolicyParams.nominees[index];
     }
 
-    function getLifePolicyParams() public view returns (SharedData.LifePolicyParams memory lifePolicyParams) {
+    function getLifePolicyParams()
+        public
+        view
+        returns (SharedData.LifePolicyParams memory lifePolicyParams)
+    {
         return s_lifePolicyParams;
     }
 
-    function withdraw() override public payable isNotTerminated {
+    function withdraw() public payable override isNotTerminated {
         bool isNominee = false;
         for (uint256 i = 0; i < s_lifePolicyParams.nominees.length; i++) {
-            if (msg.sender == s_lifePolicyParams.nominees[i].nomineeDetails.policyHolderWalletAddress) {
+            if (
+                msg.sender ==
+                s_lifePolicyParams.nominees[i].nomineeDetails.policyHolderWalletAddress
+            ) {
                 isNominee = true;
                 break;
             }
         }
-        if(!isNominee)
-        revert PolicyNomineeNotFound();
+        if (!isNominee) revert PolicyNomineeNotFound();
         if (!s_policy.isClaimable) revert PolicyNotClaimable();
 
         uint256 withdrawableAmount = s_policy.totalCoverageByPolicy;
         for (uint256 i = 0; i < s_lifePolicyParams.nominees.length; i++) {
-            s_lifePolicyParams.nominees[i].nomineeDetails.policyHolderWalletAddress.transfer(withdrawableAmount * s_lifePolicyParams.nominees[i].nomineeShare / 100);
-            }
-        setTermination(true);
+            s_lifePolicyParams.nominees[i].nomineeDetails.policyHolderWalletAddress.transfer(
+                (withdrawableAmount * s_lifePolicyParams.nominees[i].nomineeShare) / 100
+            );
         }
+        setTermination(true);
+    }
 }

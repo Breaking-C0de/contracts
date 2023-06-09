@@ -11,14 +11,6 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     using Chainlink for Chainlink.Request;
     using PriceConverter for uint256;
 
-    // events
-    event PolicyFunded(uint256 amount);
-    event PolicyRevived(uint256 amount);
-    event PolicyClaimed(uint256 amount);
-    event PolicyTerminated(uint256 amount);
-    event PolicyMatured(uint256 amount);
-
-    bytes32 private jobId;
     uint256 private fee;
 
     AggregatorV3Interface internal s_priceFeed;
@@ -26,6 +18,8 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     uint256 private s_lastPaymentTimestamp;
     uint256 private s_startTimestamp;
     uint256 private s_timePassedSinceCreation;
+    address[] private s_admins;
+
     error OnlyAdminAllowed();
     error PolicyNotActive();
     error PolicyTerminated();
@@ -42,8 +36,8 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
 
     modifier onlyAdmin() {
         bool allowed = false;
-        for (uint8 i = 0; i < admins.length; i++) {
-            if (msg.sender == admins[i]) {
+        for (uint8 i = 0; i < s_admins.length; i++) {
+            if (msg.sender == s_admins[i]) {
                 allowed = true;
                 break;
             }
@@ -59,27 +53,21 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     }
     // constant decimals
     uint256 private constant DECIMALS = 10 ** 18;
-    address[] public admins;
 
     //This array will store all those addresses which will be allowed to call certain restricted functions
     constructor(
         SharedData.Policy memory policy,
-        address[] memory _admins,
-        address _link,
-        address _oracle,
-        bytes32 _jobId,
+        address,
         address priceFeed
-    ) {
+    ) ConfirmedOwner(msg.sender) {
         s_policy = policy;
-        for (uint8 i = 0; i < _admins.length; i++) {
-            admins.push(_admins[i]);
+        for (uint8 i = 0; i < s_policy.admins.length; i++) {
+            s_admins.push(s_policy.admins[i]);
         }
-        admins.push(s_policy.policyHolder.policyHolderWalletAddress);
-        admins.push(address(this));
+        s_admins.push(s_policy.policyHolder.policyHolderWalletAddress);
+        s_admins.push(address(this));
         s_priceFeed = AggregatorV3Interface(priceFeed);
         setChainlinkToken(_link);
-        setChainlinkOracle(_oracle);
-        jobId = _jobId;
         fee = (1 * LINK_DIVISIBILITY) / 10;
         s_timePassedSinceCreation = 0;
     }
@@ -299,5 +287,44 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         uint256 ethPriceInUsd = s_policy.premiumToBePaid.getConversionRate(s_priceFeed);
         uint256 usdAmount = (s_policy.premiumToBePaid * ethPriceInUsd) / 1e18;
         return usdAmount;
+    }
+
+    function getAdmins() public view returns (address[] memory admins) {
+        return s_admins;
+    }
+
+    // Chainlink API calls
+    function requestVolumeData(
+        string memory url,
+        string memory path,
+        bytes32 jobId,
+        address oracle
+    ) public returns (bytes32 requestId) {
+        setChainlinkOracle(oracle);
+        Chainlink.Request memory req = buildChainlinkRequest(
+            jobId,
+            address(this),
+            this.fulfill.selector
+        );
+
+        // Set the URL to perform the GET request on
+        req.add("get", url);
+        req.add("path", path);
+
+        int256 timesAmount = 10 ** 18;
+        req.addInt("times", timesAmount);
+
+        // Sends the request
+        return sendChainlinkRequest(req, fee);
+    }
+
+    /**
+     * Receive the response in the form of uint256
+     */
+    function fulfill(
+        bytes32 _requestId,
+        uint256 /* _volume */
+    ) public recordChainlinkFulfillment(_requestId) {
+        // override this function to implement callback functionality
     }
 }

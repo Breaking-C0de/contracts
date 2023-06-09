@@ -23,6 +23,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
             log: true,
             args: [DECIMALS, INITIAL_PRICE],
         })
+
+        await deploy("LinkToken", {
+            from: deployer,
+            log: true,
+            args: [],
+        })
     }
 }
 module.exports.tags = ["all", "mocks", "main"]

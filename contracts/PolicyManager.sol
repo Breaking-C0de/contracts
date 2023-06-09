@@ -32,17 +32,16 @@ contract PolicyManager {
     @notice this functions is used to fund the contract in any case
     */
     function addFundToContract(address payable contractAddress) public payable {
-      if(contractAddress != address(0)){
-          revert InvalidContractAddress();
-      }
-      // Send the funds to the specified contract
+        if (contractAddress != address(0)) {
+            revert InvalidContractAddress();
+        }
+        // Send the funds to the specified contract
         (bool success, ) = contractAddress.call{value: msg.value}("");
         if (success) {
-            baseContract.sethasFundedForCurrentInterval(true);
+            emit PolicyFunded(contractAddress, msg.value);
         } else {
             revert FundingError();
         }
-        emit PolicyFunded(contractAddress, msg.value);
     }
 
     /**
@@ -69,10 +68,10 @@ contract PolicyManager {
         (bool success, ) = contractAddress.call{value: msg.value}("");
         if (success) {
             baseContract.sethasFundedForCurrentInterval(true);
+            emit PolicyFunded(contractAddress, msg.value);
         } else {
             revert FundingError();
         }
-        emit PolicyFunded(contractAddress, msg.value);
     }
 
     function withdrawFundFromContract(address payable contractAddress) public payable {
@@ -91,8 +90,8 @@ contract PolicyManager {
         baseContract.withdraw();
         emit Withdrawn(
             contractAddress,
-            baseContract.getPolicyHolderAddress(),
-            
+            baseContract.getPolicyHolderWalletAddress(),
+            baseContract.getTotalCoverageByPolicy()
         );
     }
 }

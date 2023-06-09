@@ -102,5 +102,6 @@ library SharedData {
         string policyDetails;
         PolicyType policyType;
         address payable policyManagerAddress;
+        address[] admins;
     }
 }

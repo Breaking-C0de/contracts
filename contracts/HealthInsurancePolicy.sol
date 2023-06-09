@@ -8,7 +8,7 @@ import "./BaseInsurancePolicy.sol";
  * @dev LifeInsurancePolicy is a contract for managing a life insurance policy
  */
 
-abstract contract HealthInsurancePolicy is BaseInsurancePolicy {
+contract HealthInsurancePolicy is BaseInsurancePolicy {
     error InvalidContractAddress();
     error AmountExceeded();
     error IncorrectAmount();
@@ -17,8 +17,10 @@ abstract contract HealthInsurancePolicy is BaseInsurancePolicy {
 
     constructor(
         SharedData.Policy memory policy,
-        SharedData.HealthPolicyParams memory healthPolicyParams
-    ) /*BaseInsurancePolicy(policy)*/ {
+        SharedData.HealthPolicyParams memory healthPolicyParams,
+        address _link,
+        address priceFeed
+    ) BaseInsurancePolicy(policy, _link, priceFeed) {
         s_healthPolicyParams = healthPolicyParams;
     }
 
