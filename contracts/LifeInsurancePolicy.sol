@@ -10,6 +10,7 @@ import "./BaseInsurancePolicy.sol";
 
 contract LifeInsurancePolicy is BaseInsurancePolicy {
   error WithdrawingError();
+  error PolicyNomineeNotFound();
     SharedData.LifePolicyParams private s_lifePolicyParams;
 
     constructor(
@@ -31,11 +32,21 @@ contract LifeInsurancePolicy is BaseInsurancePolicy {
     }
 
     function withdraw() public payable isNotTerminated {
+        bool isNominee = false;
+        for (uint256 i = 0; i < s_lifePolicyParams.nominees.length; i++) {
+            if (msg.sender == s_lifePolicyParams.nominees[i].nomineeDetails.policyHolderWalletAddress) {
+                isNominee = true;
+                break;
+            }
+        }
+        if(!isNominee)
+        revert PolicyNomineeNotFound();
         if (!s_policy.isClaimable) revert PolicyNotClaimable();
 
         uint256 withdrawableAmount = s_policy.totalCoverageByPolicy;
-        s_policy.policyHolder.policyHolderWalletAddress.transfer(withdrawableAmount);
+        for (uint256 i = 0; i < s_lifePolicyParams.nominees.length; i++) {
+            s_lifePolicyParams.nominees[i].nomineeDetails.policyHolderWalletAddress.transfer(withdrawableAmount * s_lifePolicyParams.nominees[i].nomineeShare / 100);
+            }
         setTermination(true);
         }
-    
 }
