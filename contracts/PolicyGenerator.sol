@@ -27,7 +27,7 @@ contract PolicyGenerator {
         s_healthInsurancePolicy = new HealthInsurancePolicy(policy, healthPolicyParams);
         localPolicyAddress = address(s_healthInsurancePolicy);
         emit PolicyCreated(
-            address(this),
+            localPolicyAddress,
             policy.policyHolder.policyHolderWalletAddress,
             SharedData.PolicyType.Health
         );
@@ -44,7 +44,7 @@ contract PolicyGenerator {
         s_lifeInsurancePolicy = new LifeInsurancePolicy(policy, lifePolicyParams);
         localPolicyAddress = address(s_lifeInsurancePolicy);
         emit PolicyCreated(
-            address(this),
+            localPolicyAddress,
             policy.policyHolder.policyHolderWalletAddress,
             SharedData.PolicyType.Life
         );
