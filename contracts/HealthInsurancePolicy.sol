@@ -8,7 +8,7 @@ import "./BaseInsurancePolicy.sol";
  * @dev LifeInsurancePolicy is a contract for managing a life insurance policy
  */
 
-contract HealthInsurancePolicy is BaseInsurancePolicy {
+abstract contract HealthInsurancePolicy is BaseInsurancePolicy {
     error InvalidContractAddress();
     error AmountExceeded();
     error IncorrectAmount();
@@ -18,7 +18,7 @@ contract HealthInsurancePolicy is BaseInsurancePolicy {
     constructor(
         SharedData.Policy memory policy,
         SharedData.HealthPolicyParams memory healthPolicyParams
-    ) BaseInsurancePolicy(policy) {
+    ) /*BaseInsurancePolicy(policy)*/ {
         s_healthPolicyParams = healthPolicyParams;
     }
 
@@ -35,6 +35,5 @@ contract HealthInsurancePolicy is BaseInsurancePolicy {
         }
         s_policy.policyHolder.policyHolderWalletAddress.transfer(withdrawableAmount);
         setHasFundedForCurrentMonth(true);
-        
     }
 }

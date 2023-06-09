@@ -4,8 +4,14 @@ pragma solidity ^0.8.0;
 import "./SharedData.sol";
 import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
+import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
+abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, ConfirmedOwner {
+    using Chainlink for Chainlink.Request;
+
+    bytes32 private jobId;
+    uint256 private fee;
+
     SharedData.Policy internal s_policy;
     uint256 private s_lastPaymentTimestamp;
     uint256 private s_startTimestamp;
@@ -23,16 +29,14 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     error PremiumAmountNotCorrect();
     error PolicyActive();
     modifier onlyAdmin() {
-        bool allowed= false;
-        for (uint8 i=0;i<admins.length;i++)
-        {
-        if (msg.sender == admins[i]) {
-            allowed =true;
-            break;
+        bool allowed = false;
+        for (uint8 i = 0; i < admins.length; i++) {
+            if (msg.sender == admins[i]) {
+                allowed = true;
+                break;
+            }
         }
-        }
-        if(!allowed)
-        revert OnlyAdminAllowed();
+        if (!allowed) revert OnlyAdminAllowed();
         _;
     }
     modifier isNotTerminated() {
@@ -44,20 +48,29 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
     // constant decimals
     uint256 private constant DECIMALS = 10 ** 18;
     address[] public admins;
+
     //This array will store all those addresses which will be allowed to call certain restricted functions
-    constructor(SharedData.Policy memory policy, address[] memory _admins) {
+    constructor(
+        SharedData.Policy memory policy,
+        address[] memory _admins,
+        address _link,
+        address _oracle,
+        bytes32 _jobId
+    ) {
         s_policy = policy;
-        for (uint8 i=0; i< _admins.length; i++)
-        {
+        for (uint8 i = 0; i < _admins.length; i++) {
             admins.push(_admins[i]);
         }
         admins.push(s_policy.policyHolder.policyHolderWalletAddress);
         admins.push(address(this));
+
+        setChainlinkToken(_link);
+        setChainlinkOracle(_oracle);
+        jobId = _jobId;
+        fee = (1 * LINK_DIVISIBILITY) / 10;
     }
 
     // Setter functions
-
-
 
     function setTermination(bool isTerminate) public onlyAdmin {
         s_policy.isTerminated = isTerminate;
@@ -185,6 +198,37 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         ) s_policy.isTerminated = true;
     }
 
+    function requestVolumeData(
+        string memory url,
+        string memory path
+    ) public returns (bytes32 requestId) {
+        Chainlink.Request memory req = buildChainlinkRequest(
+            jobId,
+            address(this),
+            this.fulfill.selector
+        );
+
+        // Set the URL to perform the GET request on
+        req.add("get", url);
+        req.add("path", path);
+
+        int256 timesAmount = 10 ** 18;
+        req.addInt("times", timesAmount);
+
+        // Sends the request
+        return sendChainlinkRequest(req, fee);
+    }
+
+    /**
+     * Receive the response in the form of uint256
+     */
+    function fulfill(
+        bytes32 _requestId,
+        uint256 /* _volume */
+    ) public recordChainlinkFulfillment(_requestId) {
+        // override this function to implement callback functionality
+    }
+
     // fallback
     receive() external payable {
         // if policy is terminated then revert
@@ -221,7 +265,6 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         if (!s_policy.isTerminated) revert PolicyTerminated();
         if (s_policy.isPolicyActive) revert PolicyNotActive();
 
-        // TODO: chainlink API call
         if (s_policy.isClaimable) revert PolicyNotClaimable();
 
         // for single claimable policies
@@ -256,10 +299,10 @@ contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient {
         s_policy.isTerminated = true;
         s_policy.policyManagerContractAddress.transfer(address(this).balance);
     }
-    function withdraw() public payable onlyAdmin isNotTerminated {
 
+    function withdraw() public payable onlyAdmin isNotTerminated {
         uint256 withdrawableAmount = s_policy.totalCoverageByPolicy;
         s_policy.policyHolder.policyHolderWalletAddress.transfer(withdrawableAmount);
         setTermination(true);
-        }
+    }
 }
