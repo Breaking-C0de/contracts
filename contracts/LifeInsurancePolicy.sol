@@ -35,7 +35,7 @@ contract LifeInsurancePolicy is BaseInsurancePolicy {
         return s_lifePolicyParams;
     }
 
-    function withdraw() public payable isNotTerminated {
+    function withdraw() override public payable isNotTerminated {
         bool isNominee = false;
         for (uint256 i = 0; i < s_lifePolicyParams.nominees.length; i++) {
             if (msg.sender == s_lifePolicyParams.nominees[i].nomineeDetails.policyHolderWalletAddress) {
