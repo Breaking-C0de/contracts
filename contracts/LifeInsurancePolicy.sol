@@ -16,8 +16,13 @@ contract LifeInsurancePolicy is BaseInsurancePolicy {
     constructor(
         SharedData.Policy memory policy,
         SharedData.LifePolicyParams memory lifePolicyParams,
-        address[] memory admins
-    ) BaseInsurancePolicy(policy,admins) {
+        address[] memory admins,
+        address _link,
+        address _oracle,
+        bytes32 _jobId,
+        address priceFeed
+
+    ) BaseInsurancePolicy(policy,admins,_link,_oracle,_jobId,priceFeed) {
         // Loop over the nominees array and push it to storage
         for (uint256 i = 0; i < lifePolicyParams.nominees.length; i++) {
             s_lifePolicyParams.nominees.push(lifePolicyParams.nominees[i]);

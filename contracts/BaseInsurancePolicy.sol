@@ -5,13 +5,16 @@ import "./SharedData.sol";
 import "@chainlink/contracts/src/v0.8/AutomationCompatible.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
 import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
+import "./PriceConvertor.sol";
 
 abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, ConfirmedOwner {
     using Chainlink for Chainlink.Request;
-
+    using PriceConverter for uint256;
+    
     bytes32 private jobId;
     uint256 private fee;
 
+    AggregatorV3Interface internal s_priceFeed;
     SharedData.Policy internal s_policy;
     uint256 private s_lastPaymentTimestamp;
     uint256 private s_startTimestamp;
@@ -55,7 +58,8 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         address[] memory _admins,
         address _link,
         address _oracle,
-        bytes32 _jobId
+        bytes32 _jobId,
+        address priceFeed
     ) {
         s_policy = policy;
         for (uint8 i = 0; i < _admins.length; i++) {
@@ -63,7 +67,7 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         }
         admins.push(s_policy.policyHolder.policyHolderWalletAddress);
         admins.push(address(this));
-
+        s_priceFeed = AggregatorV3Interface(priceFeed);
         setChainlinkToken(_link);
         setChainlinkOracle(_oracle);
         jobId = _jobId;
@@ -300,9 +304,15 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         s_policy.policyManagerContractAddress.transfer(address(this).balance);
     }
 
-    function withdraw() public payable onlyAdmin isNotTerminated {
+    function withdraw() virtual public payable onlyAdmin isNotTerminated {
         uint256 withdrawableAmount = s_policy.totalCoverageByPolicy;
         s_policy.policyHolder.policyHolderWalletAddress.transfer(withdrawableAmount);
         setTermination(true);
     }
+
+     function getPremiuminUSD() public view returns (uint256 convertedAmount) {
+    uint256 ethPriceInUsd = s_policy.premiumToBePaid.getConversionRate(s_priceFeed);
+    uint256 usdAmount = s_policy.premiumToBePaid * ethPriceInUsd / 1e18;
+  }
+
 }
