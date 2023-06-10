@@ -39,4 +39,50 @@ const { developmentChains } = require("../../helper-hardhat-config")
 
               assert(newBalance1 > oldBalance1)
           })
+
+          it("Should get the correct policy details", async function () {
+              const s_lifePolicyParams = await LifeInsurancePolicyContract.getLifePolicyParams()
+
+              assert(s_lifePolicyParams.policyHolderWalletAddress == deployer)
+          })
+
+          it("Should set the termination status correctly", async function () {
+              const tx = await LifeInsurancePolicyContract.connect(deployer).setTermination(true)
+              await tx.wait(1)
+              const s_lifePolicyParamsAfter =
+                  await LifeInsurancePolicyContract.getLifePolicyParams()
+              assert(s_lifePolicyParamsAfter.isTerminated == true)
+          })
+
+          it("Should set the policy active status correctly", async function () {
+              const tx = await LifeInsurancePolicyContract.connect(deployer).setPolicyActive(true)
+              await tx.wait(1)
+              const s_lifePolicyParamsAfter =
+                  await LifeInsurancePolicyContract.getLifePolicyParams()
+              assert(s_lifePolicyParamsAfter.isPolicyActive == true)
+          })
+
+          it("Should set the claimable status correctly", async function () {
+              const tx = await LifeInsurancePolicyContract.connect(deployer).setClaimable(true)
+              await tx.wait(1)
+              const s_lifePolicyParamsAfter =
+                  await LifeInsurancePolicyContract.getLifePolicyParams()
+              assert(s_lifePolicyParamsAfter.isClaimable == true)
+          })
+
+          it("Should set the already claimed status correctly", async function () {
+              const tx = await LifeInsurancePolicyContract.connect(deployer).setAlreadyClaimed(true)
+              await tx.wait(1)
+              const s_lifePolicyParamsAfter =
+                  await LifeInsurancePolicyContract.getLifePolicyParams()
+              assert(s_lifePolicyParamsAfter.isAlreadyClaimed == true)
+          })
+
+          it("Should set funding status correctly", async function () {
+              const tx = await LifeInsurancePolicyContract.connect(deployer).setFunding(true)
+              await tx.wait(1)
+              const s_lifePolicyParamsAfter =
+                  await LifeInsurancePolicyContract.getLifePolicyParams()
+              assert(s_lifePolicyParamsAfter.isFunding == true)
+          })
       })
