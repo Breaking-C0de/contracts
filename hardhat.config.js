@@ -28,9 +28,6 @@ module.exports = {
     allowUnlimitedContractSize: true,
     networks: {
         hardhat: {
-            // forking: {
-            //   url: MAINNET_RPC_URL
-            // }
             chainId: 31337,
         },
         localhost: {
@@ -39,18 +36,12 @@ module.exports = {
         goerli: {
             url: GOERLI_RPC_URL,
             accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
-            //   accounts: {
-            //     mnemonic: MNEMONIC,
-            //   },
             saveDeployments: true,
             chainId: 5,
         },
         mainnet: {
             url: MAINNET_RPC_URL,
             accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
-            //   accounts: {
-            //     mnemonic: MNEMONIC,
-            //   },
             saveDeployments: true,
             chainId: 1,
         },
@@ -62,7 +53,6 @@ module.exports = {
         },
     },
     etherscan: {
-        // npx hardhat verify --network <NETWORK> <CONTRACT_ADDRESS> <CONSTRUCTOR_PARAMETERS>
         apiKey: {
             goerli: ETHERSCAN_API_KEY,
             polygon: POLYGONSCAN_API_KEY,
@@ -75,10 +65,6 @@ module.exports = {
         outputFile: "gas-report.txt",
         noColors: true,
         // coinmarketcap: process.env.COINMARKETCAP_API_KEY,
-    },
-    contractSizer: {
-        runOnCompile: false,
-        only: ["NftMarketplace"],
     },
     namedAccounts: {
         deployer: {
