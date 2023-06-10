@@ -45,7 +45,7 @@ module.exports = {
             saveDeployments: true,
             chainId: 1,
         },
-        polygon: {
+        mumbai: {
             url: POLYGON_RPC_URL,
             accounts: PRIVATE_KEY !== undefined ? [PRIVATE_KEY] : [],
             saveDeployments: true,
