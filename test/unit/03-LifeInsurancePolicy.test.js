@@ -1,7 +1,7 @@
 const { assert, expect } = require("chai")
 const { network, deployments, ethers, getNamedAccounts } = require("hardhat")
 const { developmentChains, networkConfig } = require("../../helper-hardhat-config")
-
+const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
 !developmentChains.includes(network.name)
     ? describe.skip
     : describe("LifeInsurancePolicy Contract Test", function () {
@@ -46,6 +46,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                       policyType: 0, // Life
                       policyManagerAddress: signers[0].address,
                       admins: [signers[1].address, signers[2].address, signers[3].address],
+                      collaborators: [],
                   },
                   {
                       nominees: [

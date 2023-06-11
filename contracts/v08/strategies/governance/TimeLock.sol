@@ -22,4 +22,9 @@ contract TimeLock is TimelockController {
         address[] memory executors,
         address admin
     ) TimelockController(minDelay, proposers, executors, admin) {}
+
+    function _execute(address payable target, uint256 value, bytes calldata data) internal {
+        (bool success, ) = target.call{value: value}(data);
+        require(success, "TimelockController: underlying transaction reverted");
+    }
 }

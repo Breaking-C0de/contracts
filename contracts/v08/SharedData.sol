@@ -85,6 +85,7 @@ library SharedData {
     @param policyType This is the policy type
     @param policyManagerAddress This is the policy manager contract address 
     @param admins This is the list of admins for the policy who are able to call certain functions
+    @param governorContractAddress This is the governor contract address. If there is no governor contract, this should be set to the dead address
      */
     struct Policy {
         HumanDetails policyHolder;
@@ -104,5 +105,6 @@ library SharedData {
         PolicyType policyType;
         address payable policyManagerAddress;
         address[] admins;
+        address[] collaborators; // It should be dead address if there is no governor contract
     }
 }

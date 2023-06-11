@@ -1,7 +1,7 @@
 const { ethers, network } = require("hardhat")
 const { developmentChains, networkConfig } = require("../helper-hardhat-config")
 const { verify } = require("../utils/verify")
-
+const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer } = await getNamedAccounts()
     const { deploy, log } = deployments
@@ -54,6 +54,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
                 "0xe6B3e361c5C129B27210EE4Ccc71f7E8e3F4b63B",
                 "0xF2A1790753821528E7958Bdcb196Ab12949F93A7",
             ],
+            collaborators: [],
         },
         {
             nominees: [

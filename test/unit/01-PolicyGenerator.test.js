@@ -1,7 +1,7 @@
 const { assert, expect } = require("chai")
 const { network, deployments, ethers } = require("hardhat")
 const { developmentChains, DECIMALS, networkConfig } = require("../../helper-hardhat-config")
-
+const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
 !developmentChains.includes(network.name)
     ? describe.skip
     : describe("PolicyGenerator", function () {
@@ -55,6 +55,7 @@ const { developmentChains, DECIMALS, networkConfig } = require("../../helper-har
                               "0xe6B3e361c5C129B27210EE4Ccc71f7E8e3F4b63B",
                               "0xF2A1790753821528E7958Bdcb196Ab12949F93A7",
                           ],
+                          governorContractAddress: ADDRESS_ZERO,
                       },
                       {
                           nominees: [

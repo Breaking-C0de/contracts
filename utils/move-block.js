@@ -1,5 +1,5 @@
 const { network } = require("hardhat")
-export async function moveBlocks(amount) {
+async function moveBlocks(amount) {
     console.log("Moving blocks...")
     for (let index = 0; index < amount; index++) {
         await network.provider.request({
@@ -9,3 +9,5 @@ export async function moveBlocks(amount) {
     }
     console.log(`Moved ${amount} blocks`)
 }
+
+module.exports = { moveBlocks }

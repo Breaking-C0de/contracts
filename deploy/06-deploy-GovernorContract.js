@@ -2,9 +2,9 @@ const { developmentChains, networkConfig } = require("../helper-hardhat-config")
 const { verify } = require("../utils/verify")
 
 // Governor Values
-const QUORUM_PERCENTAGE = 4 // Need 4% of voters to pass
-const VOTING_DELAY = 3600 // 1 hour - after a vote passes, you have 1 hour before you can enact
-const VOTING_PERIOD = 17280 // 3 days - how long a vote is open for
+const QUORUM_PERCENTAGE = 1 // Need 1% of voters to pass
+const VOTING_DELAY = 1200 // 10 minutes - after a vote passes, you have 1 hour before you can exit
+const VOTING_PERIOD = 3600 // 1 hour - how long a vote is open for
 const PROPOSAL_THRESHOLD = 0 // 0 votes needed to create a proposal
 module.exports = async function (hre) {
     const { getNamedAccounts, deployments, network } = hre
@@ -36,4 +36,4 @@ module.exports = async function (hre) {
     }
 }
 
-module.exports.tags = ["all", "governor"]
+module.exports.tags = ["all", "governor", "main"]

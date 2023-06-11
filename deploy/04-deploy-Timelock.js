@@ -1,7 +1,7 @@
 const { verify } = require("../utils/verify")
 const { developmentChains, networkConfig } = require("../helper-hardhat-config")
 const { ethers } = require("hardhat")
-const MIN_DELAY = 86400 // 1 day
+const MIN_DELAY = 600 // 10 minutes
 module.exports = async function (hre) {
     const { getNamedAccounts, deployments, network } = hre
     const { deploy, log } = deployments
@@ -26,4 +26,4 @@ module.exports = async function (hre) {
     }
 }
 
-module.exports.tags = ["all", "timelock"]
+module.exports.tags = ["all", "timelock", "main"]

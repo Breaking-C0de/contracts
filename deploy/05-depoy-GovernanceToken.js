@@ -36,4 +36,4 @@ const delegate = async (governanceTokenAddress, delegatedAccount) => {
     console.log(`Checkpoints: ${await governanceToken.numCheckpoints(delegatedAccount)}`)
 }
 
-module.exports.tags = ["all", "governor"]
+module.exports.tags = ["all", "governor", "main"]

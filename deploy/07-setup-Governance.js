@@ -30,4 +30,4 @@ module.exports = async function (hre) {
     await revokeTx.wait(1)
 }
 
-module.exports.tags = ["all", "setup"]
+module.exports.tags = ["all", "setup", "main"]
