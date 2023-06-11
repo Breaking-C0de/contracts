@@ -31,7 +31,6 @@ contract PolicyGenerator {
         SharedData.Policy memory policy,
         SharedData.LifePolicyParams memory lifePolicyParams,
         address _link,
-        address _oracle,
         address priceFeed
     ) public returns (address policyAddress) {
         // depending on policyType deploy contract

@@ -70,12 +70,15 @@ contract LifeInsurancePolicy is BaseInsurancePolicy {
         if (!isNominee) revert PolicyNomineeNotFound();
         if (!s_policy.isClaimable) revert PolicyNotClaimable();
 
-        uint256 withdrawableAmount = s_policy.totalCoverageByPolicy;
+        uint256 withdrawableAmount;
+        if (address(this).balance < s_policy.totalCoverageByPolicy)
+            withdrawableAmount = address(this).balance;
+        else withdrawableAmount = s_policy.totalCoverageByPolicy;
         for (uint256 i = 0; i < s_lifePolicyParams.nominees.length; i++) {
             s_lifePolicyParams.nominees[i].nomineeDetails.policyHolderWalletAddress.transfer(
                 (withdrawableAmount * s_lifePolicyParams.nominees[i].nomineeShare) / 100
             );
         }
-        setTermination(true);
+        s_policy.isTerminated = true;
     }
 }
