@@ -135,6 +135,16 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         s_owner = address(msg.sender);
     }
 
+    function stringToBytes32(
+        string memory source
+    ) private pure returns (bytes32 result) {
+        bytes memory tempEmptyStringTest = bytes(source);
+        if (tempEmptyStringTest.length == 0) {
+            return 0x0;
+        }
+
+        assembly {result := mload(add(source, 32))}
+    }
     /****** BaseInsurancePolicy Functions ******/
 
     /**
@@ -327,12 +337,12 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     function requestVolumeData(
         string memory url,
         string memory path,
-        bytes32 jobId,
+        string memory jobId,
         address oracle
     ) public returns (bytes32 requestId) {
         setChainlinkOracle(oracle);
         Chainlink.Request memory req = buildChainlinkRequest(
-            jobId,
+            stringToBytes32(jobId),
             address(this),
             this.fulfill.selector
         );

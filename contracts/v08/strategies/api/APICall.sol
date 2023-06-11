@@ -28,6 +28,17 @@ contract APICall is ChainlinkClient, ConfirmedOwner {
         baseInsurancePolicyContract = BaseInsurancePolicy(baseInsurancePolicy);
     }
 
+    function stringToBytes32(
+        string memory source
+    ) private pure returns (bytes32 result) {
+        bytes memory tempEmptyStringTest = bytes(source);
+        if (tempEmptyStringTest.length == 0) {
+            return 0x0;
+        }
+
+        assembly {result := mload(add(source, 32))}
+    }
+
     /**
     @dev Chainlink Any API Implementation
     @param url the url of the API
@@ -41,12 +52,12 @@ contract APICall is ChainlinkClient, ConfirmedOwner {
     function requestClaimValidationData(
         string memory url,
         string memory path,
-        bytes32 jobId,
+        string memory jobId,
         address oracle
     ) public returns (bytes32 requestId) {
         setChainlinkOracle(oracle);
         Chainlink.Request memory req = buildChainlinkRequest(
-            jobId,
+            stringToBytes32(jobId),
             address(this),
             this.fulfill.selector
         );
