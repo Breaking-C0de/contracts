@@ -2,8 +2,8 @@ const { assert, expect } = require("chai")
 const { network, deployments, ethers, getNamedAccounts } = require("hardhat")
 const { developmentChains, networkConfig } = require("../../helper-hardhat-config")
 const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
-const moveTime = require("../../utils/move-time")
-const moveBlocks = require("../../utils/move-block")
+const { moveTime } = require("../../utils/move-time")
+const { moveBlocks } = require("../../utils/move-block")
 
 !developmentChains.includes(network.name)
     ? describe.skip
