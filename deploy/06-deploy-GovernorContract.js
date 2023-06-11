@@ -32,7 +32,7 @@ module.exports = async function (hre) {
     })
     log(`GovernorContract at ${governorContract.address}`)
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
-        await verify(governorContract.address, args)
+        await verify(governorContract.address, testArgs)
     }
 }
 

@@ -1,10 +1,19 @@
 const { network } = require("hardhat")
 const { networkConfig, developmentChains } = require("../helper-hardhat-config")
+const { verify } = require("../utils/verify")
+
 module.exports = async ({ getNamedAccounts, deployments }) => {
-    const linkToken = await ethers.getContract("LinkToken")
     const baseInsurancePolicy = await ethers.getContract("LifeInsurancePolicy")
     const { deploy, log } = deployments
-    let link = linkToken.address
+    const chainId = network.config.chainId
+    let link = ""
+    if (developmentChains.includes(network.name)) {
+        // get the linktoken contract
+        const linkToken = await ethers.getContract("LinkToken")
+        link = linkToken.address
+    } else {
+        link = networkConfig[chainId]["_link"]
+    }
     const { deployer } = await getNamedAccounts()
     const testArgs = [link, baseInsurancePolicy.address]
     log("-----------------------Deploying-----------------------------")
