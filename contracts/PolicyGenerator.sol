@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
-import "./LifeInsurancePolicy.sol";
+import "./examples/LifeInsurancePolicy.sol";
 import "./BaseInsurancePolicy.sol";
 import "./SharedData.sol";
 

@@ -15,20 +15,17 @@ contract APICall is ChainlinkClient, ConfirmedOwner {
     */
     event ClaimValidationDataReceived(bytes32 requestId, uint256 volume);
     event PolicyClaimable(bool indexed isClaimable);
-    event PolicyTerminated( bool indexed isTerminated);
+    event PolicyTerminated(bool indexed isTerminated);
 
     /**
     @notice Internal and private variables
      */
     uint256 private fee;
 
-    constructor(
-        address _link,
-        address payable baseInsurancePolicyContract
-    ) ConfirmedOwner(msg.sender) {
+    constructor(address _link, address payable baseInsurancePolicy) ConfirmedOwner(msg.sender) {
         setChainlinkToken(_link);
         fee = (1 * LINK_DIVISIBILITY) / 10;
-        baseInsurancePolicyContract = BaseInsurancePolicy(baseInsurancePolicyContract);
+        baseInsurancePolicyContract = BaseInsurancePolicy(baseInsurancePolicy);
     }
 
     /**
@@ -70,15 +67,15 @@ contract APICall is ChainlinkClient, ConfirmedOwner {
      */
     function fulfill(
         bytes32 _requestId,
-        bool _isClaimValid,
+        bool _isClaimValid
     ) public recordChainlinkFulfillment(_requestId) {
         // override this function to implement callback functionality
-        emit PolicyClaimable( _isClaimValid); 
+        emit PolicyClaimable(_isClaimValid);
 
         // for this the Strategy contract should be set as admin of the BaseInsurancePolicy contract
-        if (_isClaimValid == true){
+        if (_isClaimValid == true) {
             baseInsurancePolicyContract.setClaimable(_isClaimValid);
-        }else {
+        } else {
             baseInsurancePolicyContract.setTermination(true);
             emit PolicyTerminated(true);
         }
