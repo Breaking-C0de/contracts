@@ -7,7 +7,7 @@ import "@openzeppelin/contracts/governance/TimelockController.sol";
 
 contract TimeLock is TimelockController {
     /**
-     * @notice: The optional admin can aid with initial configuration of roles after deployment
+     * @dev The optional admin can aid with initial configuration of roles after deployment
      * without being subject to delay, but this role should be subsequently renounced in favor of
      * administration through timelocked proposals. Previous versions of this contract would assign
      * this admin to the deployer automatically and should be renounced as well.

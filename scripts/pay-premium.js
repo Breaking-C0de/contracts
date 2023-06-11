@@ -1,5 +1,5 @@
 const { ethers, network } = require("hardhat")
-const { moveBlocks } = require("../utils/move-blocks")
+const { moveBlocks } = require("../utils/move-block")
 
 async function pay() {
     // const policyManager = await ethers.getSigners()[0]
