@@ -1,12 +1,16 @@
 const { assert, expect } = require("chai")
 const { network, deployments, ethers, getNamedAccounts } = require("hardhat")
 const { developmentChains, networkConfig } = require("../../helper-hardhat-config")
+const moveTime = require("../../utils/move-time")
+const moveBlocks = require("../../utils/move-block")
 
 !developmentChains.includes(network.name)
     ? describe.skip
     : describe("LifeInsurancePolicy Contract Test", function () {
           console.log(network.name)
-          let LifeInsurancePolicyContract, deployer, signers
+          let LifeInsurancePolicyContract, deployer, signers, timeInterval
+          timeInterval = 600
+
           beforeEach(async () => {
               await deployments.fixture(["main"])
               // get signers from ethers
@@ -28,7 +32,7 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                           policyHolderWalletAddress: signers[1].address,
                       },
                       policyTenure: 120000,
-                      timeInterval: 600,
+                      timeInterval: timeInterval,
                       gracePeriod: 300,
                       timeBeforeCommencement: 120,
                       premiumToBePaid: ethers.utils.parseEther("1"),
@@ -212,35 +216,56 @@ const { developmentChains, networkConfig } = require("../../helper-hardhat-confi
                   expect(newBalanceOfPolicyHolder).to.be.lt(oldBalanceOfPolicyHolder)
               })
           })
-          it("Should set the policy active status correctly", async function () {
-              const tx = await LifeInsurancePolicyContract.connect(deployer).setPolicyActive(true)
-              await tx.wait(1)
-              const s_lifePolicyParamsAfter =
-                  await LifeInsurancePolicyContract.getLifePolicyParams()
-              assert(s_lifePolicyParamsAfter.isPolicyActive == true)
-          })
 
-          it("Should set the claimable status correctly", async function () {
-              const tx = await LifeInsurancePolicyContract.connect(deployer).setClaimable(true)
-              await tx.wait(1)
-              const s_lifePolicyParamsAfter =
-                  await LifeInsurancePolicyContract.getLifePolicyParams()
-              assert(s_lifePolicyParamsAfter.isClaimable == true)
-          })
+          describe("Chainlink Automation", function () {
+              // check the checkUpkeep and performUpkeep functions
+              it("should be able to call checkUpkeep", async function () {
+                  const LifeInsurancePolicyOfNominee = await LifeInsurancePolicyContract.connect(
+                      signers[1]
+                  )
 
-          it("Should set the already claimed status correctly", async function () {
-              const tx = await LifeInsurancePolicyContract.connect(deployer).setAlreadyClaimed(true)
-              await tx.wait(1)
-              const s_lifePolicyParamsAfter =
-                  await LifeInsurancePolicyContract.getLifePolicyParams()
-              assert(s_lifePolicyParamsAfter.isAlreadyClaimed == true)
-          })
+                  // fund for current interval
+                  const premiumToBePaid = await LifeInsurancePolicyOfNominee.getPremiumToBePaid()
+                  // pay the premium
+                  const tx = await LifeInsurancePolicyOfNominee.payPremium({
+                      value: premiumToBePaid.toString(),
+                  })
+                  await tx.wait(1)
 
-          it("Should set funding status correctly", async function () {
-              const tx = await LifeInsurancePolicyContract.connect(deployer).setFunding(true)
-              await tx.wait(1)
-              const s_lifePolicyParamsAfter =
-                  await LifeInsurancePolicyContract.getLifePolicyParams()
-              assert(s_lifePolicyParamsAfter.isFunding == true)
+                  // pay the premium again for this interval should revert
+                  await expect(
+                      LifeInsurancePolicyOfNominee.payPremium({
+                          value: premiumToBePaid.toString(),
+                      })
+                  ).to.be.revertedWith("PolicyAlreadyFundedForCurrentInterval")
+
+                  const checkData = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(""))
+
+                  // checkUpkeep should return false
+                  const checkUpkeep = await LifeInsurancePolicyOfNominee.callStatic.checkUpkeep(
+                      checkData
+                  )
+                  expect(checkUpkeep.upkeepNeeded).to.be.false
+              })
+
+              it("should be able to call performUpkeep after time passes", async function () {
+                  const LifeInsurancePolicyOfNominee = await LifeInsurancePolicyContract.connect(
+                      signers[1]
+                  )
+
+                  // fund for current interval
+                  const premiumToBePaid = await LifeInsurancePolicyOfNominee.getPremiumToBePaid()
+                  // pay the premium
+                  const tx = await LifeInsurancePolicyOfNominee.payPremium({
+                      value: premiumToBePaid.toString(),
+                  })
+                  await tx.wait(1)
+
+                  const checkData = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(""))
+
+                  moveTime(timeInterval + 1)
+
+                  await LifeInsurancePolicyOfNominee.callStatic.performUpkeep(checkData)
+              })
           })
       })
