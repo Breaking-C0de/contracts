@@ -388,6 +388,10 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         return s_policy.policyHolder;
     }
 
+    function gethasFundedForCurrentInterval() public view returns (bool hasFundedForCurrentInterval) {
+        return s_policy.hasFundedForCurrentInterval;
+    }
+
     function getPolicyTenure() public view returns (uint128 policyTenure) {
         return s_policy.policyTenure;
     }
