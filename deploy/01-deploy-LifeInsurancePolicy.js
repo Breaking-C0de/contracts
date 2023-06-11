@@ -95,7 +95,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         from: deployer,
         args: testArgs,
         log: true,
-        waitConfirmations: 1,
+        waitConfirmations: networkConfig[network.config.chainId].blockConfirmations || 1,
     })
     log("-------------------Deployed at-----------------")
     log(lifeInsurancePolicy.address)
