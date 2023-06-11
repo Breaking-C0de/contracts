@@ -1,6 +1,6 @@
 {
     "name": "@kizunasafe/kizuna-safe-contracts",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "main": "index.js",
     "repository": "https://github.com/Breaking-C0de/contracts.git",
     "author": "KizunaSafe",
