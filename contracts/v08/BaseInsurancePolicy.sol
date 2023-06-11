@@ -68,7 +68,7 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     error PolicyAlreadyFundedForCurrentInterval();
     error PolicyAlreadyClaimable();
     /**
-    @notice modifiers for the contract
+    note modifiers for the contract
      */
 
     // Only admins can call certain functions
@@ -139,7 +139,7 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
 
     /**
     @dev function makeClaim
-    @notice this function is used to make a claim on the policy, once the policy is claimed 
+    note this function is used to make a claim on the policy, once the policy is claimed 
     now user can proceed to verify the details of claim by implementing methods like 
     DAO or Using API calls to validate data */
 
@@ -159,7 +159,7 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
 
     /**
     @dev function revivePolicy
-    @notice this function is used to revive an inActive policy
+    note this function is used to revive an inActive policy
     */
     function revivePolicy() public payable onlyAdmin {
         if (s_policy.isTerminated) revert PolicyTerminated();
@@ -184,7 +184,7 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
 
     /**
     @dev function terminatePolicy
-    @notice this function is used to terminate the policy and can only be called by the admins
+    note this function is used to terminate the policy and can only be called by the admins
     */
     function terminatePolicy() public onlyAdmin {
         if (s_policy.isTerminated) revert PolicyTerminated();
@@ -248,12 +248,12 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     /***** Chainlink Functionalities *****/
     /**
     @dev Chainlink Keepers Implementation
-    @notice Chainlink Keepers is used to automatically check the policy activity. 
+    note Chainlink Keepers is used to automatically check the policy activity. 
     It checks if the policy has been funded and takes decision based on the status of 
     the funding. The policy also gets automatically termainted when the timePassedSinceCreation
     surpasses the policyTenure
     
-    @notice The function can be overidden to adjust according to the needs
+    note The function can be overidden to adjust according to the needs
     */
 
     function checkUpkeep(
@@ -320,9 +320,9 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     @param path the path to the field that you want to retrieve in the JSON body of the response
     @param jobId the jobId of the Chainlink node depending on the type of data you want to get
     @param oracle the associated oracle address to the API that you want to use
-    @notice  The requestVolumeData function can be used to call any API and get the response
+    note  The requestVolumeData function can be used to call any API and get the response
     
-    @notice The function can be overidden to adjust according to the needs, 
+    note The function can be overidden to adjust according to the needs, 
     for example if you want to get multiple variables data*/
     function requestVolumeData(
         string memory url,
@@ -388,7 +388,11 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         return s_policy.policyHolder;
     }
 
-    function gethasFundedForCurrentInterval() public view returns (bool hasFundedForCurrentInterval) {
+    function gethasFundedForCurrentInterval()
+        public
+        view
+        returns (bool hasFundedForCurrentInterval)
+    {
         return s_policy.hasFundedForCurrentInterval;
     }
 

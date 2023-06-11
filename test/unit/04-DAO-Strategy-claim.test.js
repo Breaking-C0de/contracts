@@ -14,11 +14,8 @@ const { moveTime } = require("../../utils/move-time")
               GovernanceTokenContract,
               TimeLockContract
           const MIN_DELAY = 600 // 10 minutes
-          const ADDRESS_ZERO = "0x0000000000000000000000000000000000000000"
-          const QUORUM_PERCENTAGE = 4 // Need 4% of voters to pass
           const VOTING_DELAY = 1200 // 20 minutes - after a vote passes, you have 1 hour before you can exit
           const VOTING_PERIOD = 3600 // 1 hour - how long a vote is open for
-          const PROPOSAL_THRESHOLD = 0 // 0 votes needed to create a proposal
           const voteWay = 1
           beforeEach(async () => {
               await deployments.fixture(["main"])

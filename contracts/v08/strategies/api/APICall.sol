@@ -11,14 +11,14 @@ contract APICall is ChainlinkClient, ConfirmedOwner {
     BaseInsurancePolicy private baseInsurancePolicyContract;
 
     /**
-    @notice Events related to BaseInsurancePolicy contract
+    note Events related to BaseInsurancePolicy contract
     */
     event ClaimValidationDataReceived(bytes32 requestId, uint256 volume);
     event PolicyClaimable(bool indexed isClaimable);
     event PolicyTerminated(bool indexed isTerminated);
 
     /**
-    @notice Internal and private variables
+    note Internal and private variables
      */
     uint256 private fee;
 
@@ -34,9 +34,9 @@ contract APICall is ChainlinkClient, ConfirmedOwner {
     @param path the path to the field that you want to retrieve in the JSON body of the response
     @param jobId the jobId of the Chainlink node depending on the type of data you want to get
     @param oracle the associated oracle address to the API that you want to use
-    @notice  The requestVolumeData function can be used to call any API and get the response
+    note  The requestVolumeData function can be used to call any API and get the response
     
-    @notice The function can be overidden to adjust according to the needs, 
+    note The function can be overidden to adjust according to the needs, 
     for example if you want to get multiple variables data*/
     function requestClaimValidationData(
         string memory url,
