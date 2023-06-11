@@ -44,7 +44,8 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     uint256 private s_startTimestamp;
     uint256 private s_timePassedSinceCreation;
     address[] private s_admins;
-
+    address[] private s_managers;
+    address private s_owner;
     /**
     note Errors and Warnings related to BaseInsurancePolicy contract
      */
@@ -64,7 +65,8 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     error PremiumAmountNotCorrect();
     error PolicyActive();
     error InsufficientBalance(uint256 contractBalance, uint256 amount);
-
+    error PolicyAlreadyFundedForCurrentInterval();
+    error PolicyAlreadyClaimable();
     /**
     @notice modifiers for the contract
      */
@@ -82,6 +84,18 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         _;
     }
 
+    // Only manager or deployer can call or the contract itself
+    modifier onlyManager() {
+        bool allowed = false;
+        for (uint8 i = 0; i < s_managers.length; i++) {
+            if (msg.sender == s_managers[i]) {
+                allowed = true;
+                break;
+            }
+        }
+        if (!allowed) revert OnlyManagerAllowed();
+        _;
+    }
     // Modifier to check if policy is terminated
     modifier isNotTerminated() {
         if (s_policy.isTerminated) {
@@ -104,10 +118,21 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         }
         s_admins.push(s_policy.policyHolder.policyHolderWalletAddress);
         s_admins.push(address(this));
+        s_admins.push(msg.sender);
+
+        for (uint8 i = 0; i < s_policy.collaborators.length; i++) {
+            s_managers.push(s_policy.collaborators[i]);
+            s_admins.push(s_policy.collaborators[i]);
+        }
+        s_managers.push(s_policy.policyManagerAddress);
+        s_managers.push(address(this));
+        s_managers.push(address(msg.sender));
+
         s_priceFeed = AggregatorV3Interface(priceFeed);
         setChainlinkToken(_link);
         fee = (1 * LINK_DIVISIBILITY) / 10;
         s_timePassedSinceCreation = 0;
+        s_owner = address(msg.sender);
     }
 
     /****** BaseInsurancePolicy Functions ******/
@@ -119,13 +144,13 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     DAO or Using API calls to validate data */
 
     function makeClaim() public onlyAdmin returns (bool claimed) {
-        if (!s_policy.isTerminated) revert PolicyTerminated();
-        if (s_policy.isPolicyActive) revert PolicyNotActive();
+        if (s_policy.isTerminated) revert PolicyTerminated();
+        if (!s_policy.isPolicyActive) revert PolicyNotActive();
 
-        if (s_policy.isClaimable) revert PolicyNotClaimable();
+        if (s_policy.isClaimable) revert PolicyAlreadyClaimable();
 
         // for single claimable policies
-        if (!s_policy.hasClaimed) revert PolicyAlreadyClaimed();
+        if (s_policy.hasClaimed) revert PolicyAlreadyClaimed();
 
         s_policy.hasClaimed = true;
         emit PolicyClaimed(address(this), block.timestamp, true);
@@ -137,8 +162,8 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     @notice this function is used to revive an inActive policy
     */
     function revivePolicy() public payable onlyAdmin {
-        if (!s_policy.isTerminated) revert PolicyTerminated();
-        if (!s_policy.isPolicyActive) revert PolicyActive();
+        if (s_policy.isTerminated) revert PolicyTerminated();
+        if (s_policy.isPolicyActive) revert PolicyActive();
         if (s_policy.hasClaimed) revert PolicyAlreadyClaimed();
 
         // if revivalPeriod is over then revert
@@ -171,16 +196,53 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
 
     /**
     @dev function withdraw
-    @notice this function is used to withdraw the fund from policy, 
-    function can be overidden to implement custom withdrawal logic 
+    note this function is used to withdraw the fund from policy, 
+    function can be overidden to implement custom withdrawal logic.
+    Notice that this funtion will return either the totalCoverageByPolicy if 
+    contract balance is greater than totalCoverageByPolicy or else it will return 
+    the contract balance. It can be modified accordingly in child contracts.
     */
     function withdraw() public payable virtual onlyAdmin isNotTerminated {
-        uint256 withdrawableAmount = s_policy.totalCoverageByPolicy;
-        if (address(this).balance < withdrawableAmount)
-            revert InsufficientBalance(address(this).balance, withdrawableAmount);
+        uint256 withdrawableAmount;
+        if (address(this).balance < s_policy.totalCoverageByPolicy)
+            withdrawableAmount = address(this).balance;
+        else withdrawableAmount = s_policy.totalCoverageByPolicy;
+
         s_policy.policyHolder.policyHolderWalletAddress.transfer(withdrawableAmount);
-        setTermination(true);
+        s_policy.isTerminated = true;
         emit PolicyWithdraw(address(this), block.timestamp, withdrawableAmount);
+    }
+
+    function payPremium() public payable {
+        // if policy is terminated then revert
+        if (s_policy.isTerminated) revert PolicyTerminated();
+        if (s_policy.hasFundedForCurrentInterval) revert PolicyAlreadyFundedForCurrentInterval();
+
+        // if policy is not active then revert
+        if (!s_policy.isPolicyActive) {
+            // if revivalPeriod is over then revert
+            if (
+                block.timestamp - s_lastPaymentTimestamp >
+                s_policy.revivalRule.revivalPeriod + s_policy.gracePeriod //* seconds
+            ) revert PolicyNotInGracePeriod();
+
+            // amount should be close to revivalAmount
+            if (s_policy.revivalRule.revivalAmount - msg.value > (1 * DECIMALS) / 10000)
+                revert RevivalAmountNotCorrect();
+
+            // set policy to active
+            s_lastPaymentTimestamp = block.timestamp;
+            s_policy.isPolicyActive = true;
+            return;
+        }
+
+        // if premiumToBePaid is close to msg.value then revert
+        if (s_policy.premiumToBePaid - msg.value > (1 * DECIMALS) / 10000)
+            revert PremiumAmountNotCorrect();
+
+        // set lastTimestamp to current block.timestamp
+        s_lastPaymentTimestamp = block.timestamp;
+        s_policy.hasFundedForCurrentInterval = true;
     }
 
     /***** Chainlink Functionalities *****/
@@ -243,33 +305,13 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     // fallback function
     receive() external payable {
         // if policy is terminated then revert
-        if (!s_policy.isTerminated) revert PolicyTerminated();
+        if (s_policy.isTerminated) revert PolicyTerminated();
+    }
 
-        // if policy is not active then revert
-        if (!s_policy.isPolicyActive) {
-            // if revivalPeriod is over then revert
-            if (
-                block.timestamp - s_lastPaymentTimestamp >
-                s_policy.revivalRule.revivalPeriod + s_policy.gracePeriod //* seconds
-            ) revert PolicyNotInGracePeriod();
-
-            // amount should be close to revivalAmount
-            if (s_policy.revivalRule.revivalAmount - msg.value > (1 * DECIMALS) / 10000)
-                revert RevivalAmountNotCorrect();
-
-            // set policy to active
-            s_lastPaymentTimestamp = block.timestamp;
-            s_policy.isPolicyActive = true;
-            return;
-        }
-
-        // if premiumToBePaid is close to msg.value then revert
-        if (s_policy.premiumToBePaid - msg.value > (1 * DECIMALS) / 10000)
-            revert PremiumAmountNotCorrect();
-
-        // set lastTimestamp to current block.timestamp
-        s_lastPaymentTimestamp = block.timestamp;
-        s_policy.hasFundedForCurrentInterval = true;
+    // a function to fund the contract
+    function fundContract() public payable {
+        // if policy is terminated then revert
+        if (s_policy.isTerminated) revert PolicyTerminated();
     }
 
     /**
@@ -317,23 +359,23 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
     }
 
     // Setter functions
-    function setTermination(bool isTerminate) public onlyAdmin {
-        s_policy.isTerminated = isTerminate;
+    function setTermination(bool isTerminated) public onlyManager {
+        s_policy.isTerminated = isTerminated;
     }
 
-    function setClaimable(bool isClaimable) public onlyAdmin {
+    function setClaimable(bool isClaimable) public onlyManager {
         s_policy.isClaimable = isClaimable;
     }
 
-    function setClaimed(bool hasClaimed) public onlyAdmin {
+    function setClaimed(bool hasClaimed) public onlyManager {
         s_policy.hasClaimed = hasClaimed;
     }
 
-    function setPolicyActive(bool isPolicyActive) public onlyAdmin {
+    function setPolicyActive(bool isPolicyActive) public onlyManager {
         s_policy.isPolicyActive = isPolicyActive;
     }
 
-    function sethasFundedForCurrentInterval(bool hasFundedForCurrentInterval) public onlyAdmin {
+    function sethasFundedForCurrentInterval(bool hasFundedForCurrentInterval) public onlyManager {
         s_policy.hasFundedForCurrentInterval = hasFundedForCurrentInterval;
     }
 
@@ -344,6 +386,10 @@ abstract contract BaseInsurancePolicy is AutomationCompatible, ChainlinkClient, 
         returns (SharedData.HumanDetails memory policyHolderDetails)
     {
         return s_policy.policyHolder;
+    }
+
+    function gethasFundedForCurrentInterval() public view returns (bool hasFundedForCurrentInterval) {
+        return s_policy.hasFundedForCurrentInterval;
     }
 
     function getPolicyTenure() public view returns (uint128 policyTenure) {
