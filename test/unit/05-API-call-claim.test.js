@@ -6,22 +6,15 @@ const { moveTime } = require("../../utils/move-time")
 
 !developmentChains.includes(network.name)
     ? describe.skip
-    : describe("DAO Strategy Test", function () {
+    : describe("APICall Strategy Test", function () {
           let LifeInsurancePolicyContract,
               deployer,
               signers,
               GovernorContract,
               GovernanceTokenContract,
               TimeLockContract
-          const MIN_DELAY = 600 // 10 minutes
-          const VOTING_DELAY = 1200 // 20 minutes - after a vote passes, you have 1 hour before you can exit
-          const VOTING_PERIOD = 3600 // 1 hour - how long a vote is open for
-          const voteWay = 1
           beforeEach(async () => {
-              await deployments.fixture(["main"])
-              GovernanceTokenContract = await ethers.getContract("GovernanceToken")
-              TimeLockContract = await ethers.getContract("TimeLock")
-              GovernorContract = await ethers.getContract("GovernorContract")
+              await deployments.fixture(["LifeInsurancePolicy"])
               // get signers from ethers
               signers = await ethers.getSigners()
               // get link token contract address

@@ -3,7 +3,6 @@ const { networkConfig, developmentChains } = require("../helper-hardhat-config")
 const { verify } = require("../utils/verify")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
-    const baseInsurancePolicy = await ethers.getContract("LifeInsurancePolicy")
     const { deploy, log } = deployments
     const chainId = network.config.chainId
     let link = ""
@@ -15,19 +14,20 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         link = networkConfig[chainId]["_link"]
     }
     const { deployer } = await getNamedAccounts()
-    const testArgs = [link, baseInsurancePolicy.address]
+    const testArgs = [link, "0xe6B3e361c5C129B27210EE4Ccc71f7E8e3F4b63B"]
     log("-----------------------Deploying-----------------------------")
-    const APICallcontract = await deploy("APICall", {
+    const OperatorContract = await deploy("Operator", {
         from: deployer,
         args: testArgs,
         log: true,
         waitConfirmations: networkConfig[network.config.chainId].blockConfirmations || 1,
     })
     log("-------------------Deployed at-----------------")
-    log(APICallcontract.address)
+    log(OperatorContract.address)
     if (!developmentChains.includes(network.name)) {
         log("-------------------Verifying-----------------")
-        await verify(APICallcontract.address, testArgs)
+        await verify(OperatorContract.address, testArgs)
     }
 }
-module.exports.tags = ["all", "APICall", "main"]
+
+module.exports.tags = ["all", "Operator", "main"]

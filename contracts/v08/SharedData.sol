@@ -67,7 +67,7 @@ library SharedData {
 
     /**
     @dev struct Policy
-    @notice This struct is used to store the policy details
+    note This struct is used to store the policy details
     @param policyHolder This is the policy holder's details
     @param policyTenure This is the policy tenure in seconds
     @param gracePeriod This is the grace period in seconds
@@ -85,8 +85,8 @@ library SharedData {
     @param policyType This is the policy type
     @param policyManagerAddress This is the policy manager contract address 
     @param admins This is the list of admins for the policy who are able to call certain functions
-    @param governorContractAddress This is the governor contract address. If there is no governor contract, this should be set to the dead address
-     */
+    @param collaborators These are the list of collaborators who are also managers of the policy
+    */
     struct Policy {
         HumanDetails policyHolder;
         uint128 policyTenure;

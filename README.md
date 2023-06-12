@@ -42,4 +42,4 @@ By importing this library, organizations can streamline their insurance operatio
 
 ##Details
 
-The [documentation](https://docs.org) has all details, including the architecture as well as the usage guide.
+The [documentation](https://kizunasafe.netlify.app/) has all details, including the architecture as well as the usage guide.
